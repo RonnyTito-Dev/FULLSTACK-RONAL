@@ -1,40 +1,41 @@
 // Importamos el product service
 const productService = require('../services/productService');
 
+// Importamos nuestra instancia de errores
+const ApiError = require('../errors/apiError');
+
 class ProductController {
 
     // ========================================== METODOS GET ==========================================
 
     // Metodo para obtener los productos
-    async getProducts(req, res){
+    async getProducts(req, res, next){
         try {
             const products = await productService.getProducts();
             res.json(products);
 
         } catch(error) {
-            console.error(error);
-            res.status(500).json({ message: 'Error al obtener los productos' });
+            next(ApiError.internal('Error al obtener los productos'));
         }
 
     }
 
     
     // Metodo para obtener un producto por ID
-    async getProductById(req, res){
+    async getProductById(req, res, next){
         const { id } = req.params;
 
         try {
             const product = await productService.getProductById(id);
 
             if(!product) {
-                return res.status(404).json({ message: 'Producto no encontrado' })
+                return next(ApiError.notFound('Producto no encontrado'));
             }
 
             res.json(product);
             
         } catch(error){
-            console.error(error);
-            res.status(500).json({ message: 'Error al obtener el producto' });
+            next(ApiError.internal('Error al obtener el producto'));
         }
     }
 
@@ -43,7 +44,7 @@ class ProductController {
     // ========================================== METODO POST ==========================================
 
     // Metodo para agregar un producto
-    async createProduct(req, res){
+    async createProduct(req, res, next){
 
         try {
             const { nombre, precio, descripcion } = req.body;
@@ -51,8 +52,7 @@ class ProductController {
             res.status(201).json(newProducto);
 
         } catch(error){
-            console.error(error);
-            res.status(500).json({ message: 'Error al crear el producto' });
+            next(ApiError.internal('Error al crear el producto'));
         }
     }
 
@@ -61,31 +61,34 @@ class ProductController {
     // ========================================== METODO PUT ==========================================
 
     // Metodo para actualizar un producto
-    async updateProduct(req, res){
+    async updateProduct(req, res, next){
         try {
             const { id } = req.params;
             const { nombre, precio, descripcion } = req.body;
             const updatedProduct = await productService.modifyProduct(id, { nombre, precio, descripcion });
+            
+            if (!updatedProduct) {
+                return next(ApiError.notFound('Producto no encontrado para actualizar'));
+            }
+            
             res.json(updatedProduct);
 
         } catch(error){
-            console.error(error);
-            res.status(500).json({ message: 'Error al actualizar el producto' });
+            next(ApiError.internal('Error al actualizar el producto'));
         }
     }
 
 
 
     // ========================================== METODO DELETE ==========================================
-    async deleteProduct(req, res){
+    async deleteProduct(req, res, next){
         try {
             const { id } = req.params;
             await productService.removeProduct(id);
             res.sendStatus(204);
             
         } catch(error){
-            console.error(error);
-            res.status(500).json({ message: 'Error al eliminar el producto' })
+            next(ApiError.internal('Error al eliminar el producto'));
         }
     }
 

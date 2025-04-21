@@ -5,28 +5,28 @@ const clientController = require('../controllers/clientController'); // Importam
 
 // ======================================= SOLICITUD GET =======================================
 
-router.get('/', (req, res) => clientController.getClients(req, res)); 
+router.get('/', clientController.getClients); 
 
-router.get('/dni/:dni', (req, res) => clientController.getClientByDNI(req, res));
+router.get('/dni/:dni', clientController.getClientByDNI);
 
-router.get('/id/:id', (req, res) => clientController.getClientById(req, res));
+router.get('/id/:id', clientController.getClientById);
 
 // ======================================= SOLICITUD POST =======================================
 
-router.post('/', (req, res) => clientController.createClient(req, res));
+router.post('/', clientController.createClient);
 
 
 
 // ======================================= SOLICITUD PUT =======================================
 
-router.put('/dni/:dni', (req, res) => clientController.updateClientByDNI(req, res));
+router.put('/dni/:dni', clientController.updateClientByDNI);
 
-router.put('/id/:id', (req, res) => clientController.updateClientById(req, res));
+router.put('/id/:id', clientController.updateClientById);
 
 
 // ======================================= SOLICITUD DELETE =======================================
 
-router.delete('/:dni', (req, res) => clientController.deleteClient(req, res));
+router.delete('/:dni', clientController.deleteClient);
 
 
 

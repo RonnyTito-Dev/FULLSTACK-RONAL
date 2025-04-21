@@ -5,27 +5,27 @@ const productController = require('../controllers/productController'); // Import
 
 // ======================================= SOLICITUD GET =======================================
 
-router.get('/', (req, res) => productController.getProducts(req, res)); 
+router.get('/', productController.getProducts); 
 
-router.get('/:id', (req, res) => productController.getProductById(req, res));
+router.get('/:id', productController.getProductById);
 
 
 
 // ======================================= SOLICITUD POST =======================================
 
-router.post('/', (req, res) => productController.createProduct(req, res));
+router.post('/', productController.createProduct);
 
 
 
 // ======================================= SOLICITUD PUT =======================================
 
-router.put('/:id', (req, res) => productController.updateProduct(req, res));
+router.put('/:id', productController.updateProduct);
 
 
 
 // ======================================= SOLICITUD DELETE =======================================
 
-router.delete('/:id', (req, res) => productController.deleteProduct(req, res));
+router.delete('/:id', productController.deleteProduct);
 
 
 

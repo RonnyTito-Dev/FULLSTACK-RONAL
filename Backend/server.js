@@ -2,8 +2,10 @@ const express = require('express'); // Importacion de express
 const cors = require('cors'); // Importacion de cors
 const { app } = require('./config/config'); // Importamos la configuracion de la app
 
-const productRoutes = require('./routers/productRouters'); // Importamos el enrutador de productos
-const clientRoutes = require('./routers/clientRouters'); // Importamos el enrutador de clientes
+const productRoutes = require('./routes/productRouter'); // Importamos el enrutador de productos
+const clientRoutes = require('./routes/clientRouter'); // Importamos el enrutador de clientes
+
+const errorHandler = require('./middleware/errorMiddleware'); // Importamos el middleware
 
 // Clase del servidor
 class Server {
@@ -24,6 +26,9 @@ class Server {
 
         // Todas las rutas de clientes se alojaran en /clientes
         this.app.use('/clientes', clientRoutes);
+
+        // Configuramos usar el middleware
+        this.app.use(errorHandler); 
     }
 
     // Metodo para arrancar el servidor

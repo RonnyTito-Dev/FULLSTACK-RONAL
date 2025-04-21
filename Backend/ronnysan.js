@@ -811,10 +811,10 @@ function createFile (type, PATH, fileNameExtension, content){
 
     // Crear PATH en caso no exista
     if(!fs.existsSync(PATH)){
-        fs.mkdirSync(PATH);
+        fs.mkdirSync(PATH, { recursive: true });
         console.log(`INFO => La carpeta ${PATH} para archivos de tipo [${type}] fue creada.`);
     }
-
+    
     // Verificar que el archivo exista
     if(fs.existsSync(path.join(PATH, fileNameExtension))){
         console.log(`ERROR => El archivo ${fileNameExtension} de tipo [${type}] ya existe.`);
