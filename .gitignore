@@ -1,0 +1,17 @@
+# ARCHIVOS IGNORADOS POR GIT
+
+# node Modules
+**/node_modules/
+
+
+# Entonces env
+# **/env
+
+
+# Docker Compose
+# docker-compose.yml
+
+
+# Configuracion de IDEs
+.vscode/
+

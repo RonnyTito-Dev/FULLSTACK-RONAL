@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:latest # Image for Postgre SQL
+    container_name: postgres-container # Container name
+    environment:
+      POSTGRES_USER: ${DB_USER} # DB Username
+      POSTGRES_PASSWORD: ${DB_PASS} # DB Password
+      POSTGRES_DB: ${DB_NAME} # DB Name
+    ports:
+      - "5432:${DB_PORT}" # Port Host : Port Container
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+    driver: local
