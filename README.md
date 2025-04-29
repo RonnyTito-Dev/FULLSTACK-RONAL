@@ -165,7 +165,7 @@ Los comandos de migración nos permiten gestionar la estructura de la base de da
 
 #### ⬆️ Ejecutar una **Migracion**
 ```bash
-node ronnysan.js migrate:up User
+node ronnysan.js migrate:up usersTableMigration.js
 ```
 > Este comando ejecuta la migración User, lo que construye la tabla correspondiente en la base de datos según lo definido en el archivo de migración.
 
@@ -173,7 +173,7 @@ node ronnysan.js migrate:up User
 
 #### ⬇️ Revertir una **Migracion**
 ```bash
-node ronnysan.js migrate:down User
+node ronnysan.js migrate:down usersTableMigration.js
 ```
 > Este comando revierte la migración User, eliminando la tabla o los cambios hechos en la base de datos.
 
@@ -185,7 +185,7 @@ Tambien podemos ejecutar seeders con los siguientes comandos:
 
 #### ⬆️ Ejecutar un **Seeder**
 ```bash
-node ronnysan.js seeder:up User
+node ronnysan.js seeder:up userTableSeeder.js
 ```
 > Este comando ejecuta el seeder User, lo que inserta datos establecidos en el archivo seeder en la base de datos, como registros de ejemplo para la tabla User.
 
@@ -193,7 +193,7 @@ node ronnysan.js seeder:up User
 
 #### ⬇️ Revertir un **Seeder**
 ```bash
-node ronnysan.js seeder:down User
+node ronnysan.js seeder:down userTableSeeder.js
 ```
 > Este comando revierte el seeder User, eliminando los datos que se insertaron en la base de datos.
 
@@ -201,14 +201,160 @@ node ronnysan.js seeder:down User
 
 ## 🔧 6. Instrucciones de Instalación
 
-📌 _Próximamente..._
+### 🚀 Instalación para Backend
+Sigue estos pasos para levantar correctamente el entorno de desarrollo del backend usando Docker y `ronnysan`.
+
+
+### 📦 Paso 1: Levantar los contenedores con Docker Compose
+Este proyecto utiliza Docker para gestionar la base de datos PostgreSQL.  
+
+Ejecuta el siguiente comando dentro de la carpeta backend:
+
+```bash
+docker-compose up -d
+```
+> Esto levantará la base de datos **PostgreSQL** definido en el archivo docker-compose.yml
+
+<br>
+
+### 📄 Paso 2: Verificar conexión a la base de datos
+Puedes probar si la conexión con la base de datos funciona correctamente:
+
+```bash
+node testConnection.js
+```
+<br>
+
+
+### 🏗️ Paso 3: Ejecutar las migraciones
+Una vez levantado el contenedor y confirmada la conexión, crea las tablas con los siguientes comandos utilizando el script **ronnysan**:
+
+#### 🔐 1. Levantar la tabla _Roles_
+
+```bash
+node ronnysan.js migrate:up rolesTableMigration.js
+```
+
+#### 👤 2. Levantar la tabla _Users_
+
+```bash
+node ronnysan.js migrate:up usersTableMigration.js
+```
+
+#### 📋 3. Levantar la tabla _Logs_
+
+```bash
+node ronnysan.js migrate:up logsTableMigration.js
+```
+
+#### 💳 4. Levantar la tabl _Payment Methods_
+
+```bash
+node ronnysan.js migrate:up paymentMethodsTableMigration.js
+```
+
+#### 🗂️ 5. Levantar la tabla _Catogories_
+
+```bash
+node ronnysan.js migrate:up categoriesTableMigration.js
+```
+
+#### 📦 6. Levantar la tabla _Products_
+
+```bash
+node ronnysan.js migrate:up productsTableMigration.js
+```
+
+#### 🧑‍💼 7. Levantar la tabla _Customers_
+
+```bash
+node ronnysan.js migrate:up customersTableMigration.js
+```
+
+#### 🧾 8. Levantar la tabla _Sales_
+
+```bash
+node ronnysan.js migrate:up salesTableMigration.js
+```
+
+#### 📑 9. Levantar la tabla _Sale Details_
+
+```bash
+node ronnysan.js migrate:up saleDetailsTableMigration.js
+```
+
+#### 📈 10. Levantar la tabla _Stock Movements_
+
+```bash
+node ronnysan.js migrate:up stockMovementsTableMigration.js
+```
+<br>
+
+
+### 🌱 Paso 4: Insertar datos de prueba (Seeders)
+Después de las migraciones, carga los datos iniciales en las tablas con los siguientes comandos:
+
+#### 🔐 1. Sembrar en la tabla _Roles_
+```bash
+node ronnysan.js seeder:up rolesTableSeeder.js
+```
+
+#### 👤 2. Sembrar en la tabla _Users_
+```bash
+node ronnysan.js seeder:up usersTableSeeder.js
+```
+
+#### 💳 3. Sembrar en la tabla _Payment Methods_
+```bash
+node ronnysan.js seeder:up paymentMethodsTableSeeder.js
+```
+
+#### 🗂️ 4. Sembrar en la tabla _Categories_
+```bash
+node ronnysan.js seeder:up categoriesTableSeeder.js
+```
+
+#### 📦 5. Sembrar en la tabla _Products_
+```bash
+node ronnysan.js seeder:up productsTableSeeder.js
+```
+
+#### 👥 6. Sembrar en la tabla _Customers_
+```bash
+node ronnysan.js seeder:up customersTableSeeder.js
+```
+
+#### 📝 7. Sembrar en la tabla _Logs_ (opcional)
+```bash
+node ronnysan.js seeder:up logsTableSeeder.js
+```
+
+#### 🧾 8. Sembrar en la tabla _Sales_
+```bash
+node ronnysan.js seeder:up salesTableSeeder.js
+```
+
+#### 📋 9. Sembrar en la tabla _Sale Details_
+```bash
+node ronnysan.js seeder:up saleDetailsTableSeeder.js
+```
+
+#### 🔄 10. Sembrar en la tabla _Stock Movements_
+```bash
+node ronnysan.js seeder:up stockMovementsTableSeeder.js
+```
+
+
+<br>
+
+### ✅ ¡Listo!
+El backend estará completamente operativo y con datos de prueba listos para desarrollo y pruebas.
 
 
 <br>
 
 ## 🚀 7. Uso
 
-📌 _Próximamente..._
 
 
 <br>

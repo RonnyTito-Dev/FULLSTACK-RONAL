@@ -1,11 +1,11 @@
 
-// clientsTableMigration.js
+// rolesTableMigration.js
 
 
 // Importar conexion a db
 const db = require('../../config/db');
 
-class ClientsTableMigration {
+class RolesTableMigration {
 
     // Metodo up
     async up(){
@@ -14,14 +14,9 @@ class ClientsTableMigration {
         try{
 
             await db.query(`
-                CREATE TABLE clients (
+                CREATE TABLE roles (
                     id SERIAL PRIMARY KEY,
-                    dni VARCHAR(8) UNIQUE,
-                    name VARCHAR(50) NOT NULL,
-                    email VARCHAR(50),
-                    phone VARCHAR(20),
-                    address TEXT,
-                    date_of_birth DATE NOT NULL,
+                    name VARCHAR(50) UNIQUE NOT NULL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
             `);
@@ -38,7 +33,7 @@ class ClientsTableMigration {
     // Metodo down
     async down(){
         try {
-            await db.query('DROP TABLE IF EXISTS clients CASCADE;');
+            await db.query('DROP TABLE IF EXISTS roles CASCADE;');
             console.log('EXITO => La migracion fue quitada correctamente.');
         
         } catch(error){
@@ -49,7 +44,7 @@ class ClientsTableMigration {
 };
 
 
-// Exportamos una instancia de la clase ClientsTableMigration
-module.exports = new ClientsTableMigration();
+// Exportamos una instancia de la clase RolesTableMigration
+module.exports = new RolesTableMigration();
     
     

@@ -15,3 +15,7 @@
 # Configuracion de IDEs
 .vscode/
 
+
+# Script .sql Data Base
+# nova_salud.sql
+

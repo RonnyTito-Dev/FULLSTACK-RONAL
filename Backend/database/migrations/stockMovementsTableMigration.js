@@ -1,11 +1,11 @@
 
-// clientsTableMigration.js
+// stockMovementsTableMigration.js
 
 
 // Importar conexion a db
 const db = require('../../config/db');
 
-class ClientsTableMigration {
+class stockMovementsTableMigration {
 
     // Metodo up
     async up(){
@@ -14,14 +14,13 @@ class ClientsTableMigration {
         try{
 
             await db.query(`
-                CREATE TABLE clients (
+                CREATE TABLE stock_movements (
                     id SERIAL PRIMARY KEY,
-                    dni VARCHAR(8) UNIQUE,
-                    name VARCHAR(50) NOT NULL,
-                    email VARCHAR(50),
-                    phone VARCHAR(20),
-                    address TEXT,
-                    date_of_birth DATE NOT NULL,
+                    product_id INTEGER REFERENCES products(id),
+                    type VARCHAR(10) CHECK (type IN ('input', 'output')),
+                    quantity INTEGER NOT NULL,
+                    reason TEXT,
+                    user_id INTEGER REFERENCES users(id),
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
             `);
@@ -38,7 +37,7 @@ class ClientsTableMigration {
     // Metodo down
     async down(){
         try {
-            await db.query('DROP TABLE IF EXISTS clients CASCADE;');
+            await db.query('DROP TABLE IF EXISTS stock_movements CASCADE;');
             console.log('EXITO => La migracion fue quitada correctamente.');
         
         } catch(error){
@@ -49,7 +48,7 @@ class ClientsTableMigration {
 };
 
 
-// Exportamos una instancia de la clase ClientsTableMigration
-module.exports = new ClientsTableMigration();
+// Exportamos una instancia de la clase stock_movementsTableMigration
+module.exports = new stockMovementsTableMigration();
     
     

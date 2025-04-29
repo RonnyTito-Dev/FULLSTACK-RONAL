@@ -21,8 +21,8 @@ class ProductModel {
     //======================================= METODO POST =======================================
 
     // Metodo para agregar un nuevo producto
-    async createProduct({ nombre, precio, descripcion }){
-        const result = await db.query('INSERT INTO products (nombre, precio, descripcion) VALUES ($1, $2, $3) RETURNING *', [nombre, precio, descripcion]);
+    async createProduct({ name, description, price, stock, category_id }){
+        const result = await db.query('INSERT INTO products (name, descripcion, price, stock, category_id) VALUES ($1, $2, $3, $4, $5) RETURNING *', [name, description, price, stock, category_id]);
         return result.rows[0];
     }
 
@@ -31,8 +31,8 @@ class ProductModel {
     //======================================= METODO PUT =======================================
 
     // Metodo para actualizar un producto
-    async updateProduct(id, { nombre, precio, descripcion }){
-        const result = await db.query('UPDATE products SET nombre = $1, precio = $2, descripcion = $3 WHERE id = $4 RETURNING *', [nombre, precio, descripcion, id]);
+    async updateProduct(id, { name, description, price, stock, category_id }){
+        const result = await db.query('UPDATE products SET name = $1, description = $2, price = $3, stock = $4, category_id = $5 WHERE id = $6 RETURNING *', [name, description, price, stock, category_id, id]);
         return result.rows[0];
     }
 

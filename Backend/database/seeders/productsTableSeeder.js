@@ -11,10 +11,10 @@ class ProductsTableSeeder {
 
         try{   
 
-            const result = await db.query(`INSERT INTO products (nombre, precio, descripcion) VALUES
-                ('Laptop Asus 15.6', 2350, 'Una laptop de la guerra'),
-                ('Mouse Logitech Master', 420, 'Un monito muy bonito'),
-                ('Silla Gamer Ultra', 1220, 'Una silla que vale la pena');
+            await db.query(`INSERT INTO products (name, description, price, stock, category_id) VALUES
+                ('Paracetamol 500 mg', 'Analgesico', 2.50, 100, 1),
+                ('Amoxicilina 500 mg', 'Antibiotico para infecciones bacterianas', 5.75, 80, 2),
+                ('Vitamina C 1g', 'Suplemento para el sistema inmune', 3.00, 150, 3);
             `);
 
             console.log('EXITO => El seeder "productsTableSeeder.js" fue levantado correctamente.');

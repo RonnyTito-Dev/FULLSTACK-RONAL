@@ -195,8 +195,8 @@ class ${className} {
 
 
     // Metodo para agregar un nuevo ${nameSingular} 
-    async create${nameSingular}([${columnsName.map(data => data) + ', '}]){
-        const result = await db.query('INSERT INTO ${namePlural.toLowerCase()} (${columnsName.map(col => '"' + col + '"').join(', ')}) VALUES ($1, $2, $3) RETURNING *', [dato1, dato2, dato3]);
+    async create${nameSingular}([]){
+        const result = await db.query('INSERT INTO ("entrada1", "Entrada2") VALUES ($1, $2) RETURNING *', [dato1, dato2, dato3]);
         return result.rows[0];
     }
 
@@ -916,7 +916,11 @@ async function seedDispatch(type, name){
     const seederFilePath = path.join(SEEDESPATH, name);
     
     // Obtenemos el nombre de tabla
-    const tableName = name.split('TableSeeder.js')[0];
+    let tableName = name.split('TableSeeder.js')[0];
+
+    if (/[A-Z]/.test(tableName)) {
+        tableName = tableName.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
+    }
 
     // Verificar que exista la tabla
     const existTableInDB = await existTable(tableName);
