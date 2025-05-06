@@ -18,10 +18,10 @@ class CustomersTableMigration {
                     id SERIAL PRIMARY KEY,
                     name VARCHAR(100) NOT NULL,
                     dni VARCHAR(15) UNIQUE,
-                    email VARCHAR(100),
+                    email VARCHAR(100) UNIQUE,
                     phone VARCHAR(15),
                     address TEXT,
-                    date_of_birth DATE NOT NULL,
+                    date_of_birth DATE,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
             `);

@@ -3,7 +3,9 @@
 -- ========================
 CREATE TABLE roles (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(50) UNIQUE NOT NULL
+  name VARCHAR(50) UNIQUE NOT NULL,
+  description TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ========================
@@ -25,10 +27,10 @@ CREATE TABLE customers (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   dni VARCHAR(15) UNIQUE,
-  email VARCHAR(100),
+  email VARCHAR(100) UNIQUE,
   phone VARCHAR(15),
   address TEXT,
-  date_of_birth DATE NOT NULL,
+  date_of_birth DATE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -39,6 +41,8 @@ CREATE TABLE customers (
 CREATE TABLE categories (
   id SERIAL PRIMARY KEY,
   name VARCHAR(50) UNIQUE NOT NULL
+  description TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ========================
@@ -59,7 +63,9 @@ CREATE TABLE products (
 -- ========================
 CREATE TABLE payment_methods (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(50) NOT NULL
+  name VARCHAR(50) UNIQUE NOT NULL,
+  description TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ========================
@@ -86,12 +92,22 @@ CREATE TABLE sale_details (
 );
 
 -- ========================
--- 9. STOCK MOVEMENTS
+-- 9. MOVEMENT REASONS
+-- ========================
+CREATE TABLE movement_reasons (
+  id SERIAL PRIMARY KEY,
+  type VARCHAR(10) CHECK (type IN ('in', 'out')),
+  reason VARCHAR(50) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ========================
+-- 10. STOCK MOVEMENTS
 -- ========================
 CREATE TABLE stock_movements (
   id SERIAL PRIMARY KEY,
   product_id INTEGER REFERENCES products(id),
-  type VARCHAR(10) CHECK (type IN ('in', 'out')),
+  movement_reason_id INTEGER REFERENCES movement_reasons(id),
   quantity INTEGER NOT NULL,
   reason TEXT,
   user_id INTEGER REFERENCES users(id),
@@ -99,7 +115,7 @@ CREATE TABLE stock_movements (
 );
 
 -- ========================
--- 10. LOGS
+-- 11. LOGS
 -- ========================
 CREATE TABLE logs (
   id SERIAL PRIMARY KEY,

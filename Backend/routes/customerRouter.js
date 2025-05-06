@@ -5,6 +5,12 @@ const express = require('express'); // Importamos express
 const router = express.Router(); // Inicializamos rutas de express
 const customerController = require('../controllers/customerController'); // Importamos el controlador de clientes
 
+// Importamos el middleware auth
+const authMiddleware = require('../middleware/autMiddleware');
+
+// Proteger las rutas
+router.use(authMiddleware);
+
 // ======================================= SOLICITUD GET =======================================
 
 // Obtener todos los clientes

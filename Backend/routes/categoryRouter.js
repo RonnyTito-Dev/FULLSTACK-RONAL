@@ -5,6 +5,12 @@ const express = require('express'); // Importamos express
 const router = express.Router(); // Inicializamos rutas de express
 const categoryController = require('../controllers/categoryController'); // Importamos el controlador de categorías
 
+// Importamos el middleware auth
+const authMiddleware = require('../middleware/autMiddleware');
+
+// Proteger las rutas
+router.use(authMiddleware);
+
 // ======================================= SOLICITUD GET =======================================
 
 // Obtener todas las categorías

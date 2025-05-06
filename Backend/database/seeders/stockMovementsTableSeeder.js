@@ -11,18 +11,18 @@ class StockMovementsTableSeeder {
 
         try{   
 
-            await db.query(`INSERT INTO stock_movements (product_id, type, quantity, reason, user_id) VALUES
-                (1, 'input', '100', 'Stock Inicial', 1),
-                (1, 'input', '80', 'Stock Inicial', 1),
-                (1, 'input', '150', 'Stock Inicial', 1),
-                (1, 'output', '2', 'Venta al cliente', 3),
-                (1, 'output', '1', 'Venta al cliente', 3);
+            await db.query(`INSERT INTO stock_movements (product_id, movement_reason_id, quantity, user_id) VALUES
+                (1, 1, 100, 1),
+                (1, 1, 80, 1),
+                (1, 1, 150, 1),
+                (1, 2, 2, 3),
+                (1, 2, 1, 3);
             `);
 
-            console.log('EXITO => El seeder "stock_movementsTableSeeder.js" fue levantado correctamente.');
+            console.log('EXITO => El seeder "stockMovementsTableSeeder.js" fue levantado correctamente.');
         
         } catch(error){
-            console.log('ERROR => Al ejecutar levantar el seeder "stock_movementsTableSeeder.js": + error');
+            console.log('ERROR => Al ejecutar levantar el seeder "stockMovementsTableSeeder.js": ', error);
         };
     
     }
@@ -37,7 +37,7 @@ class StockMovementsTableSeeder {
             console.log('EXITO => El seeder "stockMovementsTableSeeder.js" fue quitado correctamente.');
 
         } catch(error){
-            console.log('ERROR => Al ejecutar quitar el seeder "stockMovementsTableSeeder.js": + error');
+            console.log('ERROR => Al ejecutar quitar el seeder "stockMovementsTableSeeder.js": ', error);
         }
     
     };

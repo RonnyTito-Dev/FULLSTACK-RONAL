@@ -6,6 +6,12 @@ const router = express.Router();
 // Importamos el UserController
 const userController = require('../controllers/userController');
 
+// Importamos el middleware auth
+const authMiddleware = require('../middleware/autMiddleware');
+
+// Proteger las rutas
+router.use(authMiddleware);
+
 // ============================= RUTAS GET ==============================
 
 // Obtener todos los usuarios

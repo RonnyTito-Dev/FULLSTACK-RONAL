@@ -11,10 +11,10 @@ class RolesTableSeeder {
 
         try{   
 
-            await db.query(`INSERT INTO roles (name) VALUES
-                ('admin'),
-                ('pharmacist'),
-                ('cashier');
+            await db.query(`INSERT INTO roles (name, description) VALUES
+                ('admin', 'El administrador del negocio'),
+                ('pharmacist', 'El farmaceutico(a)'),
+                ('cashier', 'El cajero');
             `);
 
             console.log('EXITO => El seeder "rolesTableSeeder.js" fue levantado correctamente.');

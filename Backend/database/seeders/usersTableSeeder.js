@@ -4,6 +4,9 @@
 // Importamos la db
 const db = require('../../config/db');
 
+// Importamos bcrypt
+const { hashPassword } = require('../../utils/bcryptHelper');
+
 class UsersTableSeeder {
     
     // Metodo seeder up
@@ -11,16 +14,18 @@ class UsersTableSeeder {
 
         try{   
 
-            await db.query(`INSERT INTO users (name, email, password, role_id) VALUES
-                ('Pepito el matador', 'papito@gmail.com', '12345678', 1),
-                ('Martita la Poderosa', 'martita@gmail.com', '12345678', 2),
-                ('Bertita Torrejon', 'bertita@gmail.com', '12345678', 3)
-            `);
+            const password = await hashPassword('12345678');
+
+            const query = `INSERT INTO users (name, email, password, role_id) VALUES
+            ($1, $2, $3, $4)`;
+
+            await db.query(query, ['Pepito el matador', 'papito@gmail.com', password, 1]
+            );
 
             console.log('EXITO => El seeder "usersTableSeeder.js" fue levantado correctamente.');
         
         } catch(error){
-            console.log('ERROR => Al ejecutar levantar el seeder "usersTableSeeder.js": + error');
+            console.log('ERROR => Al ejecutar levantar el seeder "usersTableSeeder.js": ', error);
         };
     
     }
@@ -30,12 +35,12 @@ class UsersTableSeeder {
     async down(){
 
         try{
-            await db.query('TRUNCATE TABLE users RESTART IDENTITY');
+            await db.query('TRUNCATE TABLE users RESTART IDENTITY CASCADE');
 
             console.log('EXITO => El seeder "usersTableSeeder.js" fue quitado correctamente.');
 
         } catch(error){
-            console.log('ERROR => Al ejecutar quitar el seeder "usersTableSeeder.js": + error');
+            console.log('ERROR => Al ejecutar quitar el seeder "usersTableSeeder.js": ', error);
         }
     
     };

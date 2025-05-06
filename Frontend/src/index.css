@@ -1,0 +1,45 @@
+body {
+  font-family: 'Nunito', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+
+
+/* ==================== ESTILOS PARA EL LOGIN ==================== */
+.container-login {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background-image: url('./assets/background-famacia.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+/* Capa de degradado semitransparente */
+.container-login::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(3, 85, 238, 0.586),   /* 50% opacidad arriba */
+    rgba(36, 180, 82, 0.524)    /* 50% opacidad abajo */
+  );
+  z-index: 1;
+}
+
+/* Contenido visible por encima del fondo */
+.container-login > * {
+  position: relative;
+  z-index: 2;
+}
+
+
+
+/* ESTILOS DEL FORMULARIO PARA AGREGAR PRODUCTOS */
+.container-product-form {
+  background-color: rgb(196, 199, 204);
+}

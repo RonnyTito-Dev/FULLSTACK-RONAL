@@ -4,8 +4,6 @@
 // Importamos el RoleService
 const roleService = require('../services/roleService');
 
-// Importamos nuestra instancia de errores
-const ApiError = require('../errors/apiError');
 
 class RoleController {
 
@@ -17,7 +15,7 @@ class RoleController {
             const roles = await roleService.getRoles();
             res.json(roles);
         } catch (error) {
-            next(ApiError.internal('Error al obtener los roles'));
+            next(error);
         }
     }
 
@@ -27,15 +25,10 @@ class RoleController {
 
         try {
             const role = await roleService.getRoleById(id);
-
-            if (!role) {
-                return next(ApiError.notFound('Rol no encontrado'));
-            }
-
             res.json(role);
 
         } catch (error) {
-            next(ApiError.internal('Error al obtener el rol'));
+            next(error);
         }
     }
 
@@ -49,7 +42,7 @@ class RoleController {
             const newRole = await roleService.addRole({ name, description });
             res.status(201).json(newRole);
         } catch (error) {
-            next(ApiError.internal('Error al crear el rol'));
+            next(error);
         }
     }
 
@@ -62,15 +55,10 @@ class RoleController {
 
         try {
             const updatedRole = await roleService.modifyRole(id, { name, description });
-
-            if (!updatedRole) {
-                return next(ApiError.notFound('Rol no encontrado para actualizar'));
-            }
-
             res.json(updatedRole);
 
         } catch (error) {
-            next(ApiError.internal('Error al actualizar el rol'));
+            next(error);
         }
     }
 
@@ -84,7 +72,7 @@ class RoleController {
             await roleService.removeRole(id);
             res.sendStatus(204);
         } catch (error) {
-            next(ApiError.internal('Error al eliminar el rol'));
+            next(error);
         }
     }
 }

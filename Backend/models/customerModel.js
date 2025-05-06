@@ -22,6 +22,19 @@ class CustomerModel {
     }
 
 
+    // Obtener un cliente por DNI
+    async getCustomerByDNI(dni) {
+        const result = await db.query('SELECT * FROM customers WHERE dni = $1', [dni]);
+        return result.rows[0];
+    }
+
+    // Obtener un cliente por Email
+    async getCustomerByEmail(email) {
+        const result = await db.query('SELECT * FROM customers WHERE email = $1', [email]);
+        return result.rows[0];
+    }
+
+
 
     // ============================= METODO POST =============================
 

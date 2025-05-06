@@ -27,9 +27,9 @@ class StockMovementModel {
         return result.rows;
     }
 
-    // Obtener movimientos de stock por tipo (input o output)
+    // Obtener movimientos de stock por tipo (in 1 o out 2)
     async getStockMovementsByType(type) {
-        const result = await db.query('SELECT * FROM stock_movements WHERE type = $1 ORDER BY created_at DESC', [type]);
+        const result = await db.query('SELECT * FROM stock_movements WHERE movement_reason_id = $1 ORDER BY created_at DESC', [type]);
         return result.rows;
     }
 
@@ -44,12 +44,12 @@ class StockMovementModel {
     // ============================= METODO POST =============================
 
     // Crear un nuevo movimiento de stock
-    async createStockMovement({ product_id, type, quantity, reason, user_id }) {
+    async createStockMovement({ product_id, movement_reason_id, quantity, user_id }) {
         const result = await db.query(
-            `INSERT INTO stock_movements (product_id, type, quantity, reason, user_id)
-             VALUES ($1, $2, $3, $4, $5)
+            `INSERT INTO stock_movements (product_id, movement_reason_id, quantity, user_id)
+             VALUES ($1, $2, $3, $4)
              RETURNING *`,
-            [product_id, type, quantity, reason, user_id]
+            [product_id, movement_reason_id, quantity, user_id]
         );
         return result.rows[0];
     }
@@ -57,13 +57,13 @@ class StockMovementModel {
     // ============================= METODO PUT ==============================
 
     // Actualizar un movimiento de stock
-    async updateStockMovement(id, { product_id, type, quantity, reason, user_id }) {
+    async updateStockMovement(id, { product_id, movement_reason_id, quantity, user_id }) {
         const result = await db.query(
             `UPDATE stock_movements
-             SET product_id = $1, type = $2, quantity = $3, reason = $4, user_id = $5
-             WHERE id = $6
+             SET product_id = $1, movement_reason_id = $2, quantity = $3, user_id = $4
+             WHERE id = $5
              RETURNING *`,
-            [product_id, type, quantity, reason, user_id, id]
+            [product_id, movement_reason_id, quantity, user_id, id]
         );
         return result.rows[0];
     }

@@ -9,11 +9,23 @@ class SaleModel {
 
     // ============================= METODOS GET ==============================
 
-    // Obtener todas las ventas
+    // Obtener todas las ventas con cliente, método de pago y usuario que atendió
     async getAllSales() {
-        const result = await db.query('SELECT * FROM sales ORDER BY created_at DESC');
+        const result = await db.query(`
+            SELECT 
+                s.*, 
+                c.name AS customer_name, 
+                pm.name AS payment_method_name, 
+                u.name AS user_name
+            FROM sales s
+            INNER JOIN customers c ON s.customer_id = c.id
+            INNER JOIN payment_methods pm ON s.payment_method_id = pm.id
+            INNER JOIN users u ON s.user_id = u.id
+            ORDER BY s.created_at DESC
+        `);
         return result.rows;
     }
+
 
     // Obtener una venta por ID
     async getSaleById(id) {

@@ -21,17 +21,23 @@ class RoleModel {
         return result.rows[0];
     }
 
+    // Obtener un rol por Nomnbre
+    async getRoleByName(name) {
+        const result = await db.query('SELECT * FROM roles WHERE name = $1', [name]);
+        return result.rows[0];
+    }
+
 
 
     // ============================= METODO POST =============================
 
     // Crear un nuevo rol
-    async createRole({ name }) {
+    async createRole({ name, description }) {
         const result = await db.query(
-            `INSERT INTO roles (name)
-             VALUES ($1)
+            `INSERT INTO roles (name, description)
+             VALUES ($1, $2)
              RETURNING *`,
-            [name]
+            [name, description]
         );
         return result.rows[0];
     }
@@ -41,13 +47,13 @@ class RoleModel {
     // ============================= METODO PUT ==============================
 
     // Actualizar un rol
-    async updateRole(id, { name }) {
+    async updateRole(id, { name, description }) {
         const result = await db.query(
             `UPDATE roles
-             SET name = $1
-             WHERE id = $2
+             SET name = $1, description = $2
+             WHERE id = $3
              RETURNING *`,
-            [name, id]
+            [name, description, id]
         );
         return result.rows[0];
     }

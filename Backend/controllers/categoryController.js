@@ -4,9 +4,6 @@
 // Importamos el CategoryService
 const categoryService = require('../services/categoryService');
 
-// Importamos nuestra instancia de errores
-const ApiError = require('../errors/apiError');
-
 class CategoryController {
 
     // ========================================== METODOS GET ==========================================
@@ -17,7 +14,7 @@ class CategoryController {
             const categories = await categoryService.getAllCategories();
             res.json(categories);
         } catch (error) {
-            next(ApiError.internal('Error al obtener las categorías'));
+            next(error);
         }
     }
 
@@ -27,15 +24,10 @@ class CategoryController {
 
         try {
             const category = await categoryService.getCategoryById(id);
-
-            if (!category) {
-                return next(ApiError.notFound('Categoría no encontrada'));
-            }
-
             res.json(category);
 
         } catch (error) {
-            next(ApiError.internal('Error al obtener la categoría'));
+            next(error);
         }
     }
 
@@ -43,13 +35,13 @@ class CategoryController {
 
     // Método para agregar una nueva categoría
     async createCategory(req, res, next) {
-        const { name } = req.body;
-
+        const { name, description } = req.body;
+        
         try {
-            const newCategory = await categoryService.createCategory(name);
+            const newCategory = await categoryService.addCategory({ name, description});
             res.status(201).json(newCategory);
         } catch (error) {
-            next(ApiError.internal('Error al crear la categoría'));
+            next(error);
         }
     }
 
@@ -58,19 +50,14 @@ class CategoryController {
     // Método para actualizar una categoría
     async updateCategory(req, res, next) {
         const { id } = req.params;
-        const { name } = req.body;
+        const { name, description } = req.body;
 
         try {
-            const updatedCategory = await categoryService.updateCategory(id, name);
-
-            if (!updatedCategory) {
-                return next(ApiError.notFound('Categoría no encontrada para actualizar'));
-            }
-
+            const updatedCategory = await categoryService.modifyCategory(id, { name, description});
             res.json(updatedCategory);
 
         } catch (error) {
-            next(ApiError.internal('Error al actualizar la categoría'));
+            next(error);
         }
     }
 
@@ -81,10 +68,10 @@ class CategoryController {
         const { id } = req.params;
 
         try {
-            await categoryService.deleteCategory(id);
+            await categoryService.removeCategory(id);
             res.sendStatus(204); // Sin contenido
         } catch (error) {
-            next(ApiError.internal('Error al eliminar la categoría'));
+            next(error);
         }
     }
 }

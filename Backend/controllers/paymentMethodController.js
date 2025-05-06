@@ -4,9 +4,6 @@
 // Importamos el PaymentMethodService
 const paymentMethodService = require('../services/paymentMethodService');
 
-// Importamos nuestra instancia de errores
-const ApiError = require('../errors/apiError');
-
 class PaymentMethodController {
 
     // ========================================== METODOS GET ==========================================
@@ -17,7 +14,7 @@ class PaymentMethodController {
             const paymentMethods = await paymentMethodService.getPaymentMethods();
             res.json(paymentMethods);
         } catch (error) {
-            next(ApiError.internal('Error al obtener los métodos de pago'));
+            next(error);
         }
     }
 
@@ -27,15 +24,10 @@ class PaymentMethodController {
 
         try {
             const paymentMethod = await paymentMethodService.getPaymentMethodById(id);
-
-            if (!paymentMethod) {
-                return next(ApiError.notFound('Método de pago no encontrado'));
-            }
-
             res.json(paymentMethod);
 
         } catch (error) {
-            next(ApiError.internal('Error al obtener el método de pago'));
+            next(error);
         }
     }
 
@@ -49,7 +41,7 @@ class PaymentMethodController {
             const newPaymentMethod = await paymentMethodService.addPaymentMethod({ name, description });
             res.status(201).json(newPaymentMethod);
         } catch (error) {
-            next(ApiError.internal('Error al crear el método de pago'));
+            next(error);
         }
     }
 
@@ -62,15 +54,10 @@ class PaymentMethodController {
 
         try {
             const updatedPaymentMethod = await paymentMethodService.modifyPaymentMethod(id, { name, description });
-
-            if (!updatedPaymentMethod) {
-                return next(ApiError.notFound('Método de pago no encontrado para actualizar'));
-            }
-
             res.json(updatedPaymentMethod);
 
         } catch (error) {
-            next(ApiError.internal('Error al actualizar el método de pago'));
+            next(error);
         }
     }
 
@@ -84,7 +71,7 @@ class PaymentMethodController {
             await paymentMethodService.removePaymentMethod(id);
             res.sendStatus(204);
         } catch (error) {
-            next(ApiError.internal('Error al eliminar el método de pago'));
+            next(error);
         }
     }
 }

@@ -11,10 +11,10 @@ class CategoriesTableSeeder {
 
         try{   
 
-            await db.query(`INSERT INTO categories (name) VALUES
-                ('Analgesics'),
-                ('Antibiotics'),
-                ('Vitamins');
+            await db.query(`INSERT INTO categories (name, description) VALUES
+                ('Analgesics', 'Categoria analgesicos'),
+                ('Antibiotics', 'Categoria antibioticos'),
+                ('Vitamins', 'Categoria vitaminas');
             `);
 
             console.log('EXITO => El seeder "categoriesTableSeeder.js" fue levantado correctamente.');

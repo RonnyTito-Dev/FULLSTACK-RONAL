@@ -11,10 +11,10 @@ class PaymentMethodsTableSeeder {
 
         try{   
 
-            await db.query(`INSERT INTO payment_methods (name) VALUES
-                ('Cash'),
-                ('Credit Card'),
-                ('Yape');
+            await db.query(`INSERT INTO payment_methods (name, description) VALUES
+                ('Cash', 'En efectivo'),
+                ('Credit Card', 'Por tarjeta de credito o debito'),
+                ('Yape', 'Pago por el yapecito');
             `);
 
             console.log('EXITO => El seeder "paymentMethodsTableSeeder.js" fue levantado correctamente.');

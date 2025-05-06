@@ -17,9 +17,8 @@ class stockMovementsTableMigration {
                 CREATE TABLE stock_movements (
                     id SERIAL PRIMARY KEY,
                     product_id INTEGER REFERENCES products(id),
-                    type VARCHAR(10) CHECK (type IN ('input', 'output')),
+                    movement_reason_id INTEGER REFERENCES movement_reasons(id),
                     quantity INTEGER NOT NULL,
-                    reason TEXT,
                     user_id INTEGER REFERENCES users(id),
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );

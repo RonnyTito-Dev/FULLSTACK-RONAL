@@ -5,6 +5,12 @@ const express = require('express');
 const router = express.Router();
 const stockMovementController = require('../controllers/stockMovementController');
 
+// Importamos el middleware auth
+const authMiddleware = require('../middleware/autMiddleware');
+
+// Proteger las rutas
+router.use(authMiddleware);
+
 // ======================================= SOLICITUDES GET =======================================
 
 // Obtener todos los movimientos de stock
@@ -16,7 +22,7 @@ router.get('/:id', stockMovementController.getStockMovementById);
 // Obtener movimientos de stock por ID de producto
 router.get('/product/:product_id', stockMovementController.getStockMovementsByProductId);
 
-// Obtener movimientos de stock por tipo (input/output)
+// Obtener movimientos de stock por tipo (in/out)
 router.get('/type/:type', stockMovementController.getStockMovementsByType);
 
 // Obtener movimientos de stock por ID de usuario

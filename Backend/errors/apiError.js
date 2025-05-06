@@ -27,6 +27,11 @@ class ApiError extends Error {
         return new ApiError(401, message);
     }
 
+    // Metodo para crear un error de tipo "Conflict" (Código 409)
+    static conflict(message) {
+        return new ApiError(409, message);
+    }
+
 }
 
 // Exportamos la clase ApiError para poder usarla en otros archivos

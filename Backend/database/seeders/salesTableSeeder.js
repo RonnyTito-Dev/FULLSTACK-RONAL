@@ -12,8 +12,8 @@ class SalesTableSeeder {
         try{   
 
             await db.query(`INSERT INTO sales (user_id, customer_id, payment_method_id, total) VALUES
-                (3, 1, 1, 5.00),
-                (3, 2, 2, 9.00);
+                (1, 1, 1, 5.00),
+                (1, 2, 2, 9.00);
             `);
 
             console.log('EXITO => El seeder "salesTableSeeder.js" fue levantado correctamente.');
@@ -29,7 +29,7 @@ class SalesTableSeeder {
     async down(){
 
         try{
-            await db.query('TRUNCATE TABLE sales RESTART IDENTITY');
+            await db.query('TRUNCATE TABLE sales RESTART IDENTITY CASCADE');
 
             console.log('EXITO => El seeder "salesTableSeeder.js" fue quitado correctamente.');
 

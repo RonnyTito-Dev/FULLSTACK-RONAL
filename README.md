@@ -154,7 +154,7 @@ node ronnysan.js make:migration User
 
 #### 🌱 Crear un **Seeder**
 ```bash
-node ronnysan.js make:router User
+node ronnysan.js make:seeder User
 ```
 > Crea un archivo Seeder para User, que te permitirá insertar datos de ejemplo o predeterminados en la base de datos.
 
@@ -283,7 +283,13 @@ node ronnysan.js migrate:up salesTableMigration.js
 node ronnysan.js migrate:up saleDetailsTableMigration.js
 ```
 
-#### 📈 10. Levantar la tabla _Stock Movements_
+#### 🔨 10. Levantar la tabla _Movement Reasons_
+
+```bash
+node ronnysan.js migrate:up movementReasonsTableMigration.js
+```
+
+#### 📈 11. Levantar la tabla _Stock Movements_
 
 ```bash
 node ronnysan.js migrate:up stockMovementsTableMigration.js
@@ -339,7 +345,12 @@ node ronnysan.js seeder:up salesTableSeeder.js
 node ronnysan.js seeder:up saleDetailsTableSeeder.js
 ```
 
-#### 🔄 10. Sembrar en la tabla _Stock Movements_
+#### 🔨 10. Sembrar en la tabla _Movement Reasons_
+```bash
+node ronnysan.js seeder:up movementReasonsTableSeeder.js
+```
+
+#### 🔄 11. Sembrar en la tabla _Stock Movements_
 ```bash
 node ronnysan.js seeder:up stockMovementsTableSeeder.js
 ```

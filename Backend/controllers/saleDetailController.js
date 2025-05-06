@@ -4,9 +4,6 @@
 // Importamos el SaleDetailService
 const saleDetailService = require('../services/saleDetailService');
 
-// Importamos nuestra instancia de errores
-const ApiError = require('../errors/apiError');
-
 class SaleDetailController {
 
     // ========================================== METODOS GET ==========================================
@@ -17,7 +14,7 @@ class SaleDetailController {
             const saleDetails = await saleDetailService.getSaleDetails();
             res.json(saleDetails);
         } catch (error) {
-            next(ApiError.internal('Error al obtener los detalles de ventas'));
+            next(error);
         }
     }
 
@@ -27,15 +24,10 @@ class SaleDetailController {
 
         try {
             const saleDetail = await saleDetailService.getSaleDetailById(id);
-
-            if (!saleDetail) {
-                return next(ApiError.notFound('Detalle de venta no encontrado'));
-            }
-
             res.json(saleDetail);
 
         } catch (error) {
-            next(ApiError.internal('Error al obtener el detalle de venta'));
+            next(error);
         }
     }
 
@@ -45,15 +37,10 @@ class SaleDetailController {
 
         try {
             const saleDetails = await saleDetailService.getSaleDetailsBySaleId(sale_id);
-
-            if (!saleDetails.length) {
-                return next(ApiError.notFound('No se encontraron detalles de venta para esta venta'));
-            }
-
             res.json(saleDetails);
 
         } catch (error) {
-            next(ApiError.internal('Error al obtener los detalles de venta'));
+            next(error);
         }
     }
 
@@ -61,13 +48,14 @@ class SaleDetailController {
 
     // Método para agregar un nuevo detalle de venta
     async createSaleDetail(req, res, next) {
-        const { sale_id, product_id, quantity, price } = req.body;
+        const { sale_id, product_id, quantity, unit_price } = req.body;
+        
 
         try {
-            const newSaleDetail = await saleDetailService.addSaleDetail({ sale_id, product_id, quantity, price });
+            const newSaleDetail = await saleDetailService.addSaleDetail({ sale_id, product_id, quantity, unit_price });
             res.status(201).json(newSaleDetail);
         } catch (error) {
-            next(ApiError.internal('Error al crear el detalle de venta'));
+            next(error);
         }
     }
 
@@ -76,19 +64,15 @@ class SaleDetailController {
     // Método para actualizar un detalle de venta
     async updateSaleDetail(req, res, next) {
         const { id } = req.params;
-        const { sale_id, product_id, quantity, price } = req.body;
+        const { sale_id, product_id, quantity, unit_price } = req.body;
 
         try {
-            const updatedSaleDetail = await saleDetailService.modifySaleDetail(id, { sale_id, product_id, quantity, price });
-
-            if (!updatedSaleDetail) {
-                return next(ApiError.notFound('Detalle de venta no encontrado para actualizar'));
-            }
+            const updatedSaleDetail = await saleDetailService.modifySaleDetail(id, { sale_id, product_id, quantity, unit_price });
 
             res.json(updatedSaleDetail);
 
         } catch (error) {
-            next(ApiError.internal('Error al actualizar el detalle de venta'));
+            next(error);
         }
     }
 
@@ -102,7 +86,7 @@ class SaleDetailController {
             await saleDetailService.removeSaleDetail(id);
             res.sendStatus(204);
         } catch (error) {
-            next(ApiError.internal('Error al eliminar el detalle de venta'));
+            next(error);
         }
     }
 }

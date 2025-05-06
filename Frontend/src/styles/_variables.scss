@@ -1,0 +1,87 @@
+// ====================== Paleta de colores ====================== 
+// ======================  Colores Primarios ====================== 
+$primary-color-50: #f1f5fd;
+$primary-color-100: #dfe9fa;
+$primary-color-200: #c7d9f6;
+$primary-color-300: #a0c1f0;
+$primary-color-400: #73a0e7;
+$primary-color-500: #537fde;
+$primary-color-600: #3e63d2;
+$primary-color-700: #3550c0;
+$primary-color-800: #3448a9;
+$primary-color-900: #2c3c7c;
+
+// ======================  Colores Secundarios ====================== 
+$secondary-color-50: #eef2ff;
+$secondary-color-100: #e0e7ff;
+$secondary-color-200: #c7d2fe;
+$secondary-color-300: #a5b4fc;
+$secondary-color-400: #818cf8;
+$secondary-color-500: #6366f1;
+$secondary-color-600: #4f46e5;
+$secondary-color-700: #4338ca;
+
+// ======================  Colores Complementarios ====================== 
+// ======================  Colores gray ====================== 
+$gray-color-50: #f8fafc;
+$gray-color-100: #f1f5f9;
+$gray-color-200: #e2e8f0;
+$gray-color-300: #cbd5e1;
+$gray-color-400: #94a3b8;
+$gray-color-500: #64748b;
+$gray-color-600: #475569;
+$gray-color-700: #334155;
+$gray-color-800: #1e293b;
+$gray-color-900: #0f172a;
+
+// ======================  Colores Success ====================== 
+$success-color-50: #f0fdf4;
+$success-color-100: #dcfce7;
+$success-color-200: #bbf7d0;
+$success-color-300: #86efac;
+$success-color-400: #4ade80;
+$success-color-500: #22c55e;
+
+// ======================  Colores Warning ====================== 
+$warning-color-50: #fff7ed;
+$warning-color-100: #ffedd5;
+$warning-color-200: #fed7aa;
+$warning-color-300: #fdba74;
+$warning-color-400: #fb923c;
+
+// ======================  Colores Danger ====================== 
+$danger-color-50: #fef2f2;
+$danger-color-100: #fee2e2;
+$danger-color-200: #fecaca;
+$danger-color-300: #fca5a5;
+$danger-color-400: #f87171;
+$danger-color-500: #ef4444;
+
+
+// ======================  Espaciado ====================== 
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+
+// ====================== Tipografia ====================== 
+$font-family: 'Nunito', sans-serif;
+$font-size-base: 16px;
+$font-size-sm: 14px;
+$font-size-lg: 18px;
+$font-weight-normal: 400;
+$font-weight-bold: 700;
+
+
+// ======================  Bordes y radios ====================== 
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+
+
+// ======================  Sombra ====================== 
+$box-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+$box-shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+$box-shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);

@@ -13,8 +13,8 @@ class LogsTableSeeder {
 
             await db.query(`INSERT INTO logs (user_id, action, affected_table) VALUES
                 (1, 'Stock inicial crado', 'stock_movements'),
-                (3, 'Venta Procesada', 'sales'),
-                (3, 'Detalle de venta registrada', 'sale_details');
+                (1, 'Venta Procesada', 'sales'),
+                (1, 'Detalle de venta registrada', 'sale_details');
             `);
 
             console.log('EXITO => El seeder "logsTableSeeder.js" fue levantado correctamente.');

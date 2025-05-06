@@ -21,17 +21,23 @@ class PaymentMethodModel {
         return result.rows[0];
     }
 
+    // Obtener un método de pago por Nombre
+    async getPaymentMethodByName(name) {
+        const result = await db.query('SELECT * FROM payment_methods WHERE name = $1', [name]);
+        return result.rows[0];
+    }
+
 
 
     // ============================= METODO POST =============================
 
     // Crear un nuevo método de pago
-    async createPaymentMethod({ name }) {
+    async createPaymentMethod({ name, description }) {
         const result = await db.query(
-            `INSERT INTO payment_methods (name)
-             VALUES ($1)
+            `INSERT INTO payment_methods (name, description)
+             VALUES ($1, $2)
              RETURNING *`,
-            [name]
+            [name, description]
         );
         return result.rows[0];
     }
@@ -41,13 +47,13 @@ class PaymentMethodModel {
     // ============================= METODO PUT ==============================
 
     // Actualizar un método de pago
-    async updatePaymentMethod(id, { name }) {
+    async updatePaymentMethod(id, { name, description }) {
         const result = await db.query(
             `UPDATE payment_methods
-             SET name = $1
-             WHERE id = $2
+             SET name = $1, description = $2
+             WHERE id = $3
              RETURNING *`,
-            [name, id]
+            [name, description, id]
         );
         return result.rows[0];
     }

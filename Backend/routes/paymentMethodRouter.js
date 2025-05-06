@@ -5,6 +5,12 @@ const express = require('express');
 const router = express.Router();
 const paymentMethodController = require('../controllers/paymentMethodController');
 
+// Importamos el middleware auth
+const authMiddleware = require('../middleware/autMiddleware');
+
+// Proteger las rutas
+router.use(authMiddleware);
+
 // ======================================= SOLICITUD GET =======================================
 
 // Obtener todos los métodos de pago

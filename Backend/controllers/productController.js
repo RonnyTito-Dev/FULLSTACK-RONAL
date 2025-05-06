@@ -1,9 +1,6 @@
 // Importamos el product service
 const productService = require('../services/productService');
 
-// Importamos nuestra instancia de errores
-const ApiError = require('../errors/apiError');
-
 class ProductController {
 
     // ========================================== METODOS GET ==========================================
@@ -15,7 +12,7 @@ class ProductController {
             res.json(products);
 
         } catch(error) {
-            next(ApiError.internal('Error al obtener los productos'));
+            next(error);
         }
 
     }
@@ -27,15 +24,10 @@ class ProductController {
 
         try {
             const product = await productService.getProductById(id);
-
-            if(!product) {
-                return next(ApiError.notFound('Producto no encontrado'));
-            }
-
             res.json(product);
             
         } catch(error){
-            next(ApiError.internal('Error al obtener el producto'));
+            next(error);
         }
     }
 
@@ -47,12 +39,13 @@ class ProductController {
     async createProduct(req, res, next){
 
         try {
-            const { nombre, precio, descripcion } = req.body;
-            const newProducto = await productService.addProduct({ nombre, precio, descripcion });
+            const { name, description, price, stock, category_id } = req.body;
+            const newProducto = await productService.addProduct({ name, description, price, stock, category_id });
             res.status(201).json(newProducto);
 
         } catch(error){
-            next(ApiError.internal('Error al crear el producto'));
+            
+            next(error);
         }
     }
 
@@ -64,19 +57,32 @@ class ProductController {
     async updateProduct(req, res, next){
         try {
             const { id } = req.params;
-            const { nombre, precio, descripcion } = req.body;
-            const updatedProduct = await productService.modifyProduct(id, { nombre, precio, descripcion });
-            
-            if (!updatedProduct) {
-                return next(ApiError.notFound('Producto no encontrado para actualizar'));
-            }
-            
+            const { name, description, price, stock, category_id } = req.body;
+            const updatedProduct = await productService.modifyProduct(id, { name, description, price, stock, category_id });
             res.json(updatedProduct);
 
         } catch(error){
-            next(ApiError.internal('Error al actualizar el producto'));
+            next(error);
         }
     }
+
+
+    // Método para actualizar solo el stock de un producto
+    async updateProductStock(req, res, next) {
+        try {
+            const { id } = req.params;
+            const { stock } = req.body;
+
+            // Llamamos al servicio que solo modifica el stock
+            const updatedProduct = await productService.modifyProductStock(id, stock);
+
+            res.json(updatedProduct); // Devolvemos el producto actualizado
+
+        } catch (error) {
+            next(error); // Pasamos el error al manejador global de errores
+        }
+    }
+
 
 
 
@@ -88,7 +94,7 @@ class ProductController {
             res.sendStatus(204);
             
         } catch(error){
-            next(ApiError.internal('Error al eliminar el producto'));
+            next(error);
         }
     }
 

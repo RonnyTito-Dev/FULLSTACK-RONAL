@@ -12,4 +12,12 @@ module.exports = {
         password: process.env.DB_PASS,
         port: process.env.DB_PORT,
     },
+
+    bcrypt_config: {
+        saltRounds: parseInt(process.env.SALT_ROUNDS) || 10,
+    },
+
+    jwt_config: {
+        secretKey: process.env.SECRET_KEY,
+    }
 };

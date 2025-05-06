@@ -4,8 +4,6 @@
 // Importamos el LogService
 const logService = require('../services/logService');
 
-// Importamos nuestra instancia de errores
-const ApiError = require('../errors/apiError');
 
 class LogController {
 
@@ -17,7 +15,7 @@ class LogController {
             const logs = await logService.getLogs();
             res.json(logs);
         } catch (error) {
-            next(ApiError.internal('Error al obtener los logs'));
+            next(error);
         }
     }
 
@@ -27,15 +25,10 @@ class LogController {
 
         try {
             const log = await logService.getLogById(id);
-
-            if (!log) {
-                return next(ApiError.notFound('Log no encontrado'));
-            }
-
             res.json(log);
 
         } catch (error) {
-            next(ApiError.internal('Error al obtener el log'));
+            next(error);
         }
     }
 
@@ -45,15 +38,10 @@ class LogController {
 
         try {
             const logs = await logService.getLogsByUserId(user_id);
-
-            if (logs.length === 0) {
-                return next(ApiError.notFound('No se encontraron logs para este usuario'));
-            }
-
             res.json(logs);
 
         } catch (error) {
-            next(ApiError.internal('Error al obtener los logs del usuario'));
+            next(error);
         }
     }
 
@@ -61,13 +49,13 @@ class LogController {
 
     // Método para agregar un nuevo log
     async createLog(req, res, next) {
-        const { message, user_id, action } = req.body;
+        const { user_id, action, affected_table } = req.body;
 
         try {
-            const newLog = await logService.addLog({ message, user_id, action });
+            const newLog = await logService.addLog({ user_id, action, affected_table });
             res.status(201).json(newLog);
         } catch (error) {
-            next(ApiError.internal('Error al crear el log'));
+            next(error);
         }
     }
 }

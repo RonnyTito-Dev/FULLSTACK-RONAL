@@ -17,7 +17,7 @@ class StockMovementController {
             const movements = await stockMovementService.getAllStockMovements();
             res.json(movements);
         } catch (error) {
-            next(ApiError.internal('Error al obtener los movimientos de stock'));
+            next(error);
         }
     }
 
@@ -27,14 +27,9 @@ class StockMovementController {
 
         try {
             const movement = await stockMovementService.getStockMovementById(id);
-
-            if (!movement) {
-                return next(ApiError.notFound('Movimiento de stock no encontrado'));
-            }
-
             res.json(movement);
         } catch (error) {
-            next(ApiError.internal('Error al obtener el movimiento de stock'));
+            next(error);
         }
     }
 
@@ -44,14 +39,9 @@ class StockMovementController {
 
         try {
             const movements = await stockMovementService.getStockMovementsByProductId(product_id);
-
-            if (!movements.length) {
-                return next(ApiError.notFound('No se encontraron movimientos para este producto'));
-            }
-
             res.json(movements);
         } catch (error) {
-            next(ApiError.internal('Error al obtener los movimientos de stock del producto'));
+            next(error);
         }
     }
 
@@ -61,14 +51,9 @@ class StockMovementController {
 
         try {
             const movements = await stockMovementService.getStockMovementsByType(type);
-
-            if (!movements.length) {
-                return next(ApiError.notFound('No se encontraron movimientos de stock para este tipo'));
-            }
-
             res.json(movements);
         } catch (error) {
-            next(ApiError.internal('Error al obtener los movimientos de stock por tipo'));
+            next(error);
         }
     }
 
@@ -78,14 +63,9 @@ class StockMovementController {
 
         try {
             const movements = await stockMovementService.getStockMovementsByUserId(user_id);
-
-            if (!movements.length) {
-                return next(ApiError.notFound('No se encontraron movimientos de stock para este usuario'));
-            }
-
             res.json(movements);
         } catch (error) {
-            next(ApiError.internal('Error al obtener los movimientos de stock del usuario'));
+            next(error);
         }
     }
 
@@ -93,13 +73,13 @@ class StockMovementController {
 
     // Método para agregar un nuevo movimiento de stock
     async createStockMovement(req, res, next) {
-        const { product_id, user_id, type, quantity, reason } = req.body;
+        const { product_id, movement_reason_id, quantity, user_id } = req.body;
 
         try {
-            const newMovement = await stockMovementService.createStockMovement({ product_id, user_id, type, quantity, reason });
+            const newMovement = await stockMovementService.createStockMovement({ product_id, movement_reason_id, quantity ,user_id });
             res.status(201).json(newMovement);
         } catch (error) {
-            next(ApiError.internal('Error al crear el movimiento de stock'));
+            next(error);
         }
     }
 
@@ -108,18 +88,13 @@ class StockMovementController {
     // Método para actualizar un movimiento de stock
     async updateStockMovement(req, res, next) {
         const { id } = req.params;
-        const { product_id, user_id, type, quantity, reason } = req.body;
+        const { product_id, movement_reason_id, quantity, user_id } = req.body;
 
         try {
-            const updatedMovement = await stockMovementService.updateStockMovement(id, { product_id, user_id, type, quantity, reason });
-
-            if (!updatedMovement) {
-                return next(ApiError.notFound('Movimiento de stock no encontrado para actualizar'));
-            }
-
+            const updatedMovement = await stockMovementService.updateStockMovement(id, { product_id, movement_reason_id, quantity ,user_id  });
             res.json(updatedMovement);
         } catch (error) {
-            next(ApiError.internal('Error al actualizar el movimiento de stock'));
+            next(error);
         }
     }
 
@@ -133,7 +108,7 @@ class StockMovementController {
             await stockMovementService.deleteStockMovement(id);
             res.sendStatus(204);
         } catch (error) {
-            next(ApiError.internal('Error al eliminar el movimiento de stock'));
+            next(error);
         }
     }
 }
