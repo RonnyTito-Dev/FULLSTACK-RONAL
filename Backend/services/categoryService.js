@@ -42,19 +42,30 @@ class CategoryService {
     }
 
     // Metodo para editar una categoría
-    async modifyCategory(id, data){
+    async modifyCategory(id, data) {
         if (!data.name || data.name.trim() === '') {
             throw ApiError.badRequest('El nombre de la categoría es requerido');
         }
-
+    
         const existingCategory = await categoryModel.getCategoryById(id);
-
         if (!existingCategory) {
             throw ApiError.notFound(`Categoría con ID ${id} no encontrada`);
         }
-
+    
+        // Validar duplicado solo si el nombre fue modificado
+        if (data.name.trim() !== existingCategory.name) {
+            const duplicate = await categoryModel.getCategoryByName(data.name.trim());
+            if (duplicate) {
+                throw ApiError.conflict(`La categoría con el nombre ${data.name} ya existe`);
+            }
+        }
+    
+        // Limpieza antes de actualizar
+        data.name = data.name.trim();
+    
         return await categoryModel.updateCategory(id, data);
     }
+    
 
     // Metodo para eliminar una categoría
     async removeCategory(id){

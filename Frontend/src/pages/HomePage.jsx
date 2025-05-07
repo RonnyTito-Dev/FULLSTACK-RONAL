@@ -108,7 +108,7 @@ const HomePage = () => {
       </div>
 
       {/* Últimas Ventas */}
-      <div className="card shadow-sm mb-4">
+      {/* <div className="card shadow-sm mb-4">
         <div className="card-header bg-white d-flex justify-content-between align-items-center">
           <h5 className="mb-0">
             <i className="bi bi-clock-history me-2"></i>
@@ -124,7 +124,7 @@ const HomePage = () => {
             <p className="mt-2">No hay ventas recientes</p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Acciones Rápidas */}
       <div className="card shadow-sm">

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axiosInstance';
 import Swal from 'sweetalert2';
+import { createLog } from '../services/logService';
+
 
 const ProductForm = () => {
   const { id } = useParams();
@@ -106,6 +108,8 @@ const ProductForm = () => {
 
       if (id) {
         await api.put(`/products/${id}`, productData);
+        // Registrar log actualizar
+        await createLog({ action: 'Editó un producto', affected_table: 'products'});
         Swal.fire({
           icon: 'success',
           title: '¡Producto actualizado!',
@@ -114,6 +118,8 @@ const ProductForm = () => {
         });
       } else {
         await api.post('/products', productData);
+        // Registrar log agregar
+        await createLog({ action: 'Agregó un producto', affected_table: 'products'});
         Swal.fire({
           icon: 'success',
           title: '¡Producto creado!',

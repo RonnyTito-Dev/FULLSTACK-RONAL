@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axiosInstance';
 import Swal from 'sweetalert2';
+import { createLog } from '../services/logService';
 
 const LoginPage = () => {
   const [credentials, setCredentials] = useState({
@@ -39,6 +40,9 @@ const LoginPage = () => {
 
     try {
       await api.post('/auth/login', credentials);
+
+      // Registrar log auth
+      await createLog({ action: 'Inició sesion', affected_table: 'ninguna'});
       
       await Swal.fire({
         icon: 'success',

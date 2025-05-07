@@ -4,24 +4,25 @@ import api from '../api/axiosInstance';
 import Swal from 'sweetalert2';
 import { createLog } from '../services/logService';
 
-const SalesPage = () => {
-  const [sales, setSales] = useState([]);
+const RolesPage = () => {
+  const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [salesPerPage] = useState(10);
+  const [rolesPerPage] = useState(10);
   const navigate = useNavigate();
 
+  // Fetch roles from API
   useEffect(() => {
-    const fetchSales = async () => {
+    const fetchRoles = async () => {
       try {
-        const { data } = await api.get('/sales');
-        setSales(data);
+        const { data } = await api.get('/roles');
+        setRoles(data);
       } catch (error) {
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'No se pudieron cargar las ventas',
+          text: 'No se pudieron cargar los roles',
           confirmButtonColor: '#3085d6'
         });
       } finally {
@@ -29,13 +30,14 @@ const SalesPage = () => {
       }
     };
 
-    fetchSales();
+    fetchRoles();
   }, []);
 
+  // Delete role
   const handleDelete = async (id) => {
     const result = await Swal.fire({
-      title: '¿Eliminar venta?',
-      text: 'Esta acción no se puede deshacer',
+      title: '¿Eliminar rol?',
+      text: "Esta acción no se puede deshacer",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
@@ -46,26 +48,37 @@ const SalesPage = () => {
 
     if (result.isConfirmed) {
       try {
-        await api.delete(`/sales/${id}`);
-        await createLog({ action: 'Eliminó una venta', affected_table: 'sales'});
-        setSales(sales.filter(sale => sale.id !== id));
-        Swal.fire('¡Eliminado!', 'La venta ha sido eliminada.', 'success');
+        await api.delete(`/roles/${id}`);
+        setRoles(roles.filter(role => role.id !== id));
+        // Registrar log
+        await createLog({ action: 'Eliminó un rol', affected_table: 'roles'});
+
+        Swal.fire(
+          '¡Eliminado!',
+          'El rol ha sido eliminado.',
+          'success'
+        );
       } catch (error) {
-        Swal.fire('Error', 'No se pudo eliminar la venta', 'error');
+        Swal.fire(
+          'Error',
+          'No se pudo eliminar el rol',
+          'error'
+        );
       }
     }
   };
 
-  const filteredSales = sales.filter(sale =>
-    String(sale.id).includes(searchTerm) ||
-    String(sale.customer_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    String(sale.payment_method_name || '').toLowerCase().includes(searchTerm.toLowerCase())
+  // Filter roles by search term
+  const filteredRoles = roles.filter(role =>
+    role.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    role.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const indexOfLastSale = currentPage * salesPerPage;
-  const indexOfFirstSale = indexOfLastSale - salesPerPage;
-  const currentSales = filteredSales.slice(indexOfFirstSale, indexOfLastSale);
-  const totalPages = Math.ceil(filteredSales.length / salesPerPage);
+  // Pagination logic
+  const indexOfLastRole = currentPage * rolesPerPage;
+  const indexOfFirstRole = indexOfLastRole - rolesPerPage;
+  const currentRoles = filteredRoles.slice(indexOfFirstRole, indexOfLastRole);
+  const totalPages = Math.ceil(filteredRoles.length / rolesPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -80,27 +93,31 @@ const SalesPage = () => {
   }
 
   return (
-    <div className="sales-page">
+    <div className="roles-page">
+      {/* Header with title and actions */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="mb-0 d-flex align-items-center">
-          <i className="bi bi-receipt-cutoff me-2 text-primary"></i>
-          Gestión de Ventas
+          <i className="bi bi-shield-lock me-2 text-primary"></i>
+          Gestión de Roles
         </h2>
-        <Link to="/ventas/nueva" className="btn btn-primary">
-          <i className="bi bi-plus-lg me-2"></i> Nueva Venta
+        <Link to="/roles/nuevo" className="btn btn-primary">
+          <i className="bi bi-plus-lg me-2"></i> Nuevo Rol
         </Link>
       </div>
 
+      {/* Search and filter bar */}
       <div className="card mb-4 shadow-sm">
         <div className="card-body">
           <div className="row">
             <div className="col-md-6 mb-3 mb-md-0">
               <div className="input-group">
-                <span className="input-group-text"><i className="bi bi-search"></i></span>
+                <span className="input-group-text">
+                  <i className="bi bi-search"></i>
+                </span>
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="Buscar por ID, cliente o método de pago"
+                  placeholder="Buscar roles..."
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
@@ -111,13 +128,14 @@ const SalesPage = () => {
             </div>
             <div className="col-md-6 d-flex align-items-center justify-content-end">
               <span className="me-3">
-                Mostrando {currentSales.length} de {filteredSales.length} ventas
+                Mostrando {currentRoles.length} de {filteredRoles.length} roles
               </span>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Roles table */}
       <div className="card shadow-sm">
         <div className="card-body p-0">
           <div className="table-responsive">
@@ -125,42 +143,37 @@ const SalesPage = () => {
               <thead className="table-light">
                 <tr>
                   <th width="60px">ID</th>
-                  <th>Cliente</th>
-                  <th>Método de Pago</th>
-                  <th width="120px">Total</th>
-                  <th width="180px">Fecha</th>
-                  <th>Atendido por</th>
-                  <th width="180px" className="text-center">Acciones</th>
+                  <th>Nombre</th>
+                  <th>Descripción</th>
+                  <th width="150px">Fecha Creación</th>
+                  <th width="150px" className="text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                {currentSales.length > 0 ? (
-                  currentSales.map(sale => (
-                    <tr key={sale.id}>
-                      <td>{sale.id}</td>
-                      <td>{sale.customer_name || 'N/A'}</td>
-                      <td>{sale.payment_method_name || 'N/A'}</td>
-                      <td className="fw-bold text-success">S/ {sale.total}</td>
-                      <td>{new Date(sale.created_at).toLocaleString()}</td>
-                      <td>{sale.user_name}</td>
+                {currentRoles.length > 0 ? (
+                  currentRoles.map(role => (
+                    <tr key={role.id}>
+                      <td>{role.id}</td>
+                      <td>
+                        <Link to={`/roles/${role.id}`} className="text-decoration-none">
+                          {role.name}
+                        </Link>
+                      </td>
+                      <td className="text-truncate" style={{ maxWidth: '200px' }} title={role.description}>
+                        {role.description || '-'}
+                      </td>
+                      <td>{new Date(role.created_at).toLocaleDateString()}</td>
                       <td className="text-center">
-                        <div className="btn-group btn-group-sm">
+                        <div className="btn-group btn-group-sm" role="group">
                           <button
-                            onClick={() => navigate(`/ventas/${sale.id}/detalles`)}
+                            onClick={() => navigate(`/roles/${role.id}/editar`)}
                             className="btn btn-outline-primary"
-                            title="Ver detalle"
-                          >
-                            <i className="bi bi-eye"></i>
-                          </button>
-                          {/* <button
-                            onClick={() => navigate(`/ventas/${sale.id}/editar`)}
-                            className="btn btn-outline-warning"
                             title="Editar"
                           >
                             <i className="bi bi-pencil"></i>
-                          </button> */}
+                          </button>
                           <button
-                            onClick={() => handleDelete(sale.id)}
+                            onClick={() => handleDelete(role.id)}
                             className="btn btn-outline-danger"
                             title="Eliminar"
                           >
@@ -172,26 +185,26 @@ const SalesPage = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="7" className="text-center py-4">
+                    <td colSpan="5" className="text-center py-4">
                       {searchTerm ? (
-                        <>
+                        <div>
                           <i className="bi bi-search text-muted fs-1"></i>
-                          <p className="mt-2">No se encontraron ventas</p>
-                          <button
+                          <p className="mt-2">No se encontraron roles</p>
+                          <button 
                             className="btn btn-sm btn-outline-primary mt-2"
                             onClick={() => setSearchTerm('')}
                           >
                             Limpiar búsqueda
                           </button>
-                        </>
+                        </div>
                       ) : (
-                        <>
-                          <i className="bi bi-receipt text-muted fs-1"></i>
-                          <p className="mt-2">No hay ventas registradas</p>
-                          <Link to="/ventas/nueva" className="btn btn-sm btn-primary mt-2">
-                            <i className="bi bi-plus-lg me-2"></i> Agregar venta
+                        <div>
+                          <i className="bi bi-shield-lock text-muted fs-1"></i>
+                          <p className="mt-2">No hay roles registrados</p>
+                          <Link to="/roles/nuevo" className="btn btn-sm btn-primary mt-2">
+                            <i className="bi bi-plus-lg me-2"></i> Agregar rol
                           </Link>
-                        </>
+                        </div>
                       )}
                     </td>
                   </tr>
@@ -202,23 +215,35 @@ const SalesPage = () => {
         </div>
       </div>
 
-      {filteredSales.length > salesPerPage && (
+      {/* Pagination */}
+      {filteredRoles.length > rolesPerPage && (
         <nav className="mt-4">
           <ul className="pagination justify-content-center">
             <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-              <button className="page-link" onClick={() => paginate(currentPage - 1)}>
+              <button 
+                className="page-link" 
+                onClick={() => paginate(currentPage - 1)}
+              >
                 <i className="bi bi-chevron-left"></i>
               </button>
             </li>
+            
             {Array.from({ length: totalPages }, (_, i) => (
               <li key={i} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
-                <button className="page-link" onClick={() => paginate(i + 1)}>
+                <button 
+                  className="page-link" 
+                  onClick={() => paginate(i + 1)}
+                >
                   {i + 1}
                 </button>
               </li>
             ))}
+            
             <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-              <button className="page-link" onClick={() => paginate(currentPage + 1)}>
+              <button 
+                className="page-link" 
+                onClick={() => paginate(currentPage + 1)}
+              >
                 <i className="bi bi-chevron-right"></i>
               </button>
             </li>
@@ -229,4 +254,4 @@ const SalesPage = () => {
   );
 };
 
-export default SalesPage;
+export default RolesPage;

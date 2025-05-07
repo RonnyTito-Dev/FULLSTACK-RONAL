@@ -43,23 +43,27 @@ class RoleService {
     }
 
     // Metodo para editar un Role
-    async modifyRole(id, data){
+    async modifyRole(id, data) {
         if (!data.name) {
             throw ApiError.badRequest('Nombre de rol es requerido');
         }
-
+    
         const existing = await roleModel.getRoleById(id);
         if (!existing) {
             throw ApiError.notFound(`No se encontró el rol con ID ${id}`);
         }
-
-        const existingName = await roleModel.getRoleByName(data.name);
-        if (existingName) {
-            throw ApiError.conflict(`El rol con el nombre ${data.name} ya existe`);
+    
+        // Verificar si el nombre cambió antes de validar duplicados
+        if (data.name.trim() !== existing.name) {
+            const existingName = await roleModel.getRoleByName(data.name.trim());
+            if (existingName) {
+                throw ApiError.conflict(`El rol con el nombre ${data.name} ya existe`);
+            }
         }
-
+    
         return await roleModel.updateRole(id, data);
     }
+    
 
     // Metodo para eliminar un Role
     async removeRole(id){

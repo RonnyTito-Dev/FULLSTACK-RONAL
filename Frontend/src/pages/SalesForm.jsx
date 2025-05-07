@@ -2,58 +2,50 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../api/axiosInstance";
 import Swal from "sweetalert2";
+import { createLog } from '../services/logService';
 
 const SalesForm = () => {
-    const { id } = useParams(); // Si hay un ID, es edición; si no, es creación.
+    const { id } = useParams();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const [isEditing] = useState(!!id); // Determina si es modo edición.
-    const [currentUserId, setCurrentUserId] = useState(null); // Nuevo estado para el usuario actual
-
-
-    // Estado del formulario
+    const [currentUserId, setCurrentUserId] = useState(null);
     const [formData, setFormData] = useState({
         customer_id: "",
         payment_method_id: "",
-        products: [], // Array de productos: { product_id, quantity, price }
+        products: [],
         total: 0,
     });
-
-    // Datos para selects (ejemplo: métodos de pago y productos)
     const [paymentMethods, setPaymentMethods] = useState([]);
     const [availableProducts, setAvailableProducts] = useState([]);
-    const [clients, setClients] = useState([]); // Datos de clientes
+    const [clients, setClients] = useState([]);
 
-    // Cargar datos iniciales (para edición o selects)
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
                 setLoading(true);
-
-                // Obtener datos de usuario actual
                 const authRes = await api.get("/auth/me");
                 setCurrentUserId(authRes.data.id);
 
-                // Cargar métodos de pago, productos disponibles y clientes
                 const [methodsRes, productsRes, clientsRes] = await Promise.all([
                     api.get("/payment-methods"),
-                    api.get("/products"),
-                    api.get("/customers"), // Asumiendo que hay una API para los clientes
+                    api.get("/products?stock=1"), // Solo productos con stock
+                    api.get("/customers"),
                 ]);
                 setPaymentMethods(methodsRes.data);
                 setAvailableProducts(productsRes.data);
                 setClients(clientsRes.data);
 
-                // Si es edición, cargar los datos de la venta
                 if (id) {
                     const { data } = await api.get(`/sales/${id}`);
+                    const detailsRes = await api.get(`/sale-details/sale/${id}`);
+                    
                     setFormData({
                         customer_id: data.customer_id,
                         payment_method_id: data.payment_method_id,
-                        products: data.products.map(p => ({
-                            product_id: p.id,
+                        products: detailsRes.data.map(p => ({
+                            product_id: p.product_id,
                             quantity: p.quantity,
-                            price: p.price,
+                            price: p.unit_price,
                         })),
                         total: data.total,
                     });
@@ -64,29 +56,25 @@ const SalesForm = () => {
                     title: "Error",
                     text: "No se pudieron cargar los datos necesarios",
                 });
+                navigate("/ventas");
             } finally {
                 setLoading(false);
             }
         };
 
         fetchInitialData();
-    }, [id]);
+    }, [id, navigate]);
 
-    // Manejador de cambios en inputs
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
-
-
 
     const handleProductChange = (index, field, value) => {
         const updatedProducts = [...formData.products];
 
         if (field === "product_id") {
             const selectedProductId = Number(value);
-
-            // Verificar si ya existe este producto en otra fila
             const isDuplicate = updatedProducts.some(
                 (p, i) => i !== index && p.product_id === selectedProductId
             );
@@ -97,7 +85,7 @@ const SalesForm = () => {
                     title: "Producto duplicado",
                     text: "Este producto ya ha sido agregado. Por favor selecciona otro.",
                 });
-                return; // Evitar que se actualice el producto duplicado
+                return;
             }
 
             const selectedProduct = availableProducts.find(
@@ -109,16 +97,13 @@ const SalesForm = () => {
                     ...updatedProducts[index],
                     product_id: selectedProductId,
                     price: parseFloat(selectedProduct.price),
-                    quantity: 1, // opción por defecto
+                    quantity: 1,
                 };
             }
         } else if (field === "quantity") {
             updatedProducts[index][field] = Number(value);
-        } else {
-            updatedProducts[index][field] = value;
         }
 
-        // Recalcular total
         const total = updatedProducts.reduce(
             (sum, product) =>
                 sum + (Number(product.quantity) || 0) * (Number(product.price) || 0),
@@ -132,8 +117,6 @@ const SalesForm = () => {
         });
     };
 
-
-    // Agregar nuevo producto al formulario
     const addProduct = () => {
         setFormData({
             ...formData,
@@ -144,11 +127,8 @@ const SalesForm = () => {
         });
     };
 
-    // Eliminar producto del formulario
     const removeProduct = (index) => {
         const updatedProducts = formData.products.filter((_, i) => i !== index);
-
-        // Recalcular total después de eliminar el producto
         const total = updatedProducts.reduce(
             (sum, product) =>
                 sum + (Number(product.quantity) || 0) * (Number(product.price) || 0),
@@ -158,13 +138,10 @@ const SalesForm = () => {
         setFormData({
             ...formData,
             products: updatedProducts,
-            total: parseFloat(total.toFixed(2)), // Actualiza el total
+            total: parseFloat(total.toFixed(2)),
         });
     };
 
-
-
-    // Enviar formulario (POST o PUT)
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -174,7 +151,6 @@ const SalesForm = () => {
                 throw new Error("Debe agregar productos a la venta.");
             }
 
-            // Paso 1: Registrar la venta
             const salesPayload = {
                 user_id: currentUserId,
                 customer_id: formData.customer_id,
@@ -183,27 +159,27 @@ const SalesForm = () => {
             };
 
             let saleResponse;
-            if (isEditing) {
+            if (id) {
                 saleResponse = await api.put(`/sales/${id}`, salesPayload);
+                await createLog({ action: 'Editó una venta', affected_table: 'sales'});
                 Swal.fire("¡Actualizado!", "La venta se actualizó correctamente.", "success");
             } else {
                 saleResponse = await api.post("/sales", salesPayload);
+                await createLog({ action: 'Generó una venta', affected_table: 'sales'});
                 Swal.fire("¡Creado!", "La venta se registró correctamente.", "success");
             }
 
             const saleId = saleResponse.data.id;
 
-            // Paso 2: Enviar cada detalle de producto individualmente
+            // Actualizar detalles de venta
             for (const p of formData.products) {
                 if (!p.product_id || !p.quantity || !p.price) {
                     throw new Error("Los productos deben tener un ID, cantidad y precio válidos.");
                 }
 
-                // Obtener el stock del producto desde la base de datos
                 const productResponse = await api.get(`/products/${p.product_id}`);
                 const productStock = productResponse.data.stock;
 
-                // Verificar que el stock esté disponible
                 if (productStock < p.quantity) {
                     throw new Error(`No hay suficiente stock para el producto ${p.product_id}.`);
                 }
@@ -215,15 +191,26 @@ const SalesForm = () => {
                     unit_price: parseFloat(p.price),
                 };
 
-                // Agregar a detalles de venta
-                await api.post("/sale-details", detailPayload);
+                if (id) {
+                    // Actualizar detalle existente o crear nuevo
+                    const existingDetail = saleDetails.find(d => d.product_id === p.product_id);
+                    if (existingDetail) {
+                        await api.put(`/sale-details/${existingDetail.id}`, detailPayload);
+                    } else {
+                        await api.post("/sale-details", detailPayload);
+                    }
+                } else {
+                    await api.post("/sale-details", detailPayload);
+                }
 
-                // 3. Actualizar stock: Restamos la cantidad vendida al stock actual
+                await createLog({ action: '(AUTO) Se actualizó detalle de venta', affected_table: 'sale_details'});
+
+                // Actualizar stock
                 const updatedStock = {
-                    stock: productStock - p.quantity, // restamos la cantidad vendida
+                    stock: productStock - p.quantity,
                 };
-
                 await api.put(`/products/stock/${p.product_id}`, updatedStock);
+                await createLog({ action: '(AUTO) Se actualizó stock', affected_table: 'products'});
             }
 
             navigate("/ventas");
@@ -238,10 +225,6 @@ const SalesForm = () => {
             setLoading(false);
         }
     };
-
-
-
-
 
     if (loading && !formData.products) {
         return (
@@ -259,12 +242,11 @@ const SalesForm = () => {
                 <div className="card-header bg-primary text-white">
                     <h4 className="mb-0">
                         <i className="bi bi-receipt me-2"></i>
-                        {isEditing ? "Editar Venta" : "Nueva Venta"}
+                        {id ? "Editar Venta" : "Nueva Venta"}
                     </h4>
                 </div>
                 <div className="card-body">
                     <form onSubmit={handleSubmit}>
-                        {/* Cliente */}
                         <div className="mb-3">
                             <label className="form-label">Cliente</label>
                             <select
@@ -283,7 +265,6 @@ const SalesForm = () => {
                             </select>
                         </div>
 
-                        {/* Método de pago */}
                         <div className="mb-3">
                             <label className="form-label">Método de Pago</label>
                             <select
@@ -302,7 +283,6 @@ const SalesForm = () => {
                             </select>
                         </div>
 
-                        {/* Lista de productos */}
                         <div className="mb-4">
                             <div className="d-flex justify-content-between align-items-center mb-3">
                                 <h5 className="mb-0">Productos</h5>
@@ -310,6 +290,7 @@ const SalesForm = () => {
                                     type="button"
                                     className="btn btn-sm btn-primary"
                                     onClick={addProduct}
+                                    disabled={availableProducts.length === 0}
                                 >
                                     <i className="bi bi-plus-lg me-1"></i> Agregar
                                 </button>
@@ -321,7 +302,6 @@ const SalesForm = () => {
                                 </div>
                             ) : (
                                 formData.products.map((product, index) => (
-
                                     <div key={index} className="row g-3 mb-3 align-items-end">
                                         <div className="col-md-5">
                                             <label className="form-label">Producto</label>
@@ -335,8 +315,14 @@ const SalesForm = () => {
                                             >
                                                 <option value="">Seleccionar...</option>
                                                 {availableProducts.map((prod) => (
-                                                    <option key={prod.id} value={prod.id}>
-                                                        {prod.name} (S/ {prod.price})
+                                                    <option 
+                                                        key={prod.id} 
+                                                        value={prod.id}
+                                                        disabled={formData.products.some((p, i) => 
+                                                            i !== index && p.product_id === prod.id
+                                                        )}
+                                                    >
+                                                        {prod.name} (Stock: {prod.stock}) - S/ {prod.price}
                                                     </option>
                                                 ))}
                                             </select>
@@ -354,7 +340,6 @@ const SalesForm = () => {
                                                 required
                                             />
                                         </div>
-
                                         <div className="col-md-2">
                                             <label className="form-label">Precio Unitario</label>
                                             <input
@@ -364,9 +349,8 @@ const SalesForm = () => {
                                                 disabled
                                             />
                                         </div>
-
                                         <div className="col-md-2">
-                                            <label className="form-label mt-2">Subtotal</label>
+                                            <label className="form-label">Subtotal</label>
                                             <input
                                                 type="text"
                                                 className="form-control"
@@ -374,8 +358,6 @@ const SalesForm = () => {
                                                 disabled
                                             />
                                         </div>
-
-
                                         <div className="col-md-1">
                                             <button
                                                 type="button"
@@ -390,14 +372,12 @@ const SalesForm = () => {
                             )}
                         </div>
 
-                        {/* Total */}
                         <div className="mb-4 p-3 bg-light rounded">
                             <h4 className="text-end mb-0">
-                                Total: <span className="text-success">S/ {formData.total.toFixed(2)}</span>
+                                Total: <span className="text-success">S/ {formData.total}</span>
                             </h4>
                         </div>
 
-                        {/* Botones */}
                         <div className="d-flex justify-content-end gap-2">
                             <button
                                 type="button"
@@ -412,7 +392,7 @@ const SalesForm = () => {
                                         <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                                         Procesando...
                                     </>
-                                ) : isEditing ? (
+                                ) : id ? (
                                     "Actualizar Venta"
                                 ) : (
                                     "Registrar Venta"

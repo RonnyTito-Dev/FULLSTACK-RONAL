@@ -55,25 +55,30 @@ class UserService {
         return await userModel.createUser({ name, email, password: hashed, role_id });
     }
 
+
+
     // Método para modificar los datos de un usuario (excepto la contraseña)
     async modifyUser(id, data) {
-
         if (!data.name || !data.email || !data.role_id) {
             throw ApiError.badRequest('Nombre, email y rol son requeridos');
         }
-
+    
         const existing = await userModel.getUserById(id);
         if (!existing) {
             throw ApiError.notFound(`Usuario con ID ${id} no encontrado`);
         }
-
-        const existingEmail = await userModel.getUserByEmail(data.email.trim());
-        if (existingEmail) {
-            throw ApiError.conflict(`El email ${data.email} ya está registrado`);
+    
+        // Validar solo si el email cambió
+        if (data.email.trim() !== existing.email) {
+            const existingEmail = await userModel.getUserByEmail(data.email.trim());
+            if (existingEmail) {
+                throw ApiError.conflict(`El email ${data.email} ya está registrado por otro usuario`);
+            }
         }
-
+    
         return await userModel.updateUser(id, data);
     }
+    
 
     // Método para actualizar la contraseña de un usuario
     async modifyPassword(id, password) {

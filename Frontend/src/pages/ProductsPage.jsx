@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api/axiosInstance';
 import Swal from 'sweetalert2';
+import { createLog } from '../services/logService';
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -49,6 +50,8 @@ const ProductsPage = () => {
       try {
         await api.delete(`/products/${id}`);
         setProducts(products.filter(product => product.id !== id));
+        // Registrar log eliminar
+        await createLog({ action: 'Eliminó un producto', affected_table: 'products'});
         Swal.fire(
           '¡Eliminado!',
           'El producto ha sido eliminado.',

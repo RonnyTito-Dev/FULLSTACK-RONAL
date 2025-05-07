@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axiosInstance';
 import Swal from 'sweetalert2';
+import { createLog } from '../services/logService';
 
 const CustomerForm = () => {
     const { id } = useParams();
@@ -136,6 +137,8 @@ const CustomerForm = () => {
             const nombreCompleto = `${nombres} ${apellidoPaterno} ${apellidoMaterno}`;
             
             if (nombreCompleto.trim()) {
+                // Registrar log
+                await createLog({ action: 'Usó la Api Reniec', affected_table: 'ninguno'});
                 setFormData(prev => ({
                     ...prev,
                     name: nombreCompleto
@@ -173,6 +176,8 @@ const CustomerForm = () => {
 
             if (id) {
                 await api.put(`/customers/${id}`, customerData);
+                // Registrar log
+                await createLog({ action: 'Editó un cliente', affected_table: 'customers'});
                 Swal.fire({
                     icon: 'success',
                     title: '¡Cliente actualizado!',
@@ -181,6 +186,8 @@ const CustomerForm = () => {
                 });
             } else {
                 await api.post('/customers', customerData);
+                // Registrar log
+                await createLog({ action: 'Creó un cliente', affected_table: 'customers'});
                 Swal.fire({
                     icon: 'success',
                     title: '¡Cliente creado!',

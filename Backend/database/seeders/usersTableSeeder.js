@@ -19,7 +19,7 @@ class UsersTableSeeder {
             const query = `INSERT INTO users (name, email, password, role_id) VALUES
             ($1, $2, $3, $4)`;
 
-            await db.query(query, ['Pepito el matador', 'papito@gmail.com', password, 1]
+            await db.query(query, ['Ronny Tito', 'ronnytito@gmail.com', password, 1]
             );
 
             console.log('EXITO => El seeder "usersTableSeeder.js" fue levantado correctamente.');

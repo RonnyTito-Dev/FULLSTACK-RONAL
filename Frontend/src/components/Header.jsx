@@ -2,7 +2,10 @@
 import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-import api from '../api/axiosInstance'; // Tu instancia personalizada de Axios
+import api from '../api/axiosInstance'; 
+
+import { createLog } from '../services/logService';
+
 
 const Header = ({ onToggleSidebar }) => {
   const navigate = useNavigate();
@@ -36,6 +39,8 @@ const Header = ({ onToggleSidebar }) => {
 
     if (result.isConfirmed) {
       try {
+        // Registrar log auth
+        await createLog({ action: 'Cerró sesion', affected_table: 'ninguna'});
         await api.post('/auth/logout');
         navigate('/login', { replace: true });
 

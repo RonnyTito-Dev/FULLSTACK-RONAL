@@ -47,19 +47,23 @@ class PaymentMethodService {
         if (!data.name) {
             throw ApiError.badRequest('El nombre del método de pago es obligatorio');
         }
-
+    
         const existing = await paymentMethodModel.getPaymentMethodById(id);
         if (!existing) {
             throw ApiError.notFound(`Método de pago con ID ${id} no existe`);
         }
-
-        const existingName = await paymentMethodModel.getPaymentMethodByName(data.name);
-        if(existingName){
-            throw ApiError.conflict(`El nombre ${data.name} ya existe`)
+    
+        // Validar duplicado solo si el nombre fue modificado
+        if (data.name.trim() !== existing.name) {
+            const existingName = await paymentMethodModel.getPaymentMethodByName(data.name.trim());
+            if (existingName) {
+                throw ApiError.conflict(`El nombre ${data.name} ya existe`);
+            }
         }
-
+    
         return await paymentMethodModel.updatePaymentMethod(id, data);
     }
+    
 
     // Metodo para eliminar un método de pago
     async removePaymentMethod(id) {

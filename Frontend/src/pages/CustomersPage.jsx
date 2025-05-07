@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../api/axiosInstance';
 import Swal from 'sweetalert2';
+import { createLog } from '../services/logService';
 
 const CustomersPage = () => {
   const [customers, setCustomers] = useState([]);
@@ -47,6 +48,8 @@ const CustomersPage = () => {
       try {
         await api.delete(`/customers/${id}`);
         setCustomers(customers.filter(customer => customer.id !== id));
+        // Registrar log
+        await createLog({ action: 'Eliminó un cliente', affected_table: 'customers'});
         Swal.fire('¡Eliminado!', 'El cliente ha sido eliminado.', 'success');
       } catch (error) {
         Swal.fire('Error', 'No se pudo eliminar el cliente', 'error');
