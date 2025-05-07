@@ -43,3 +43,20 @@ body {
 .container-product-form {
   background-color: rgb(196, 199, 204);
 }
+
+
+/* ESTILOS PARA EL SIDEBAR */
+
+.sidebar-transition {
+  transition: max-width 0.3s ease;
+}
+
+.sidebar-label {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
+}
+
+.sidebar-label.collapsed {
+  opacity: 0;
+}

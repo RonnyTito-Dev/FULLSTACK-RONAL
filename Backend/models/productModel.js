@@ -17,6 +17,17 @@ class ProductModel {
     }
 
 
+    // Metodo para obtener un producto por Name
+    async getProductByName(name) {
+        const result = await db.query(
+            `SELECT * FROM products WHERE TRIM(LOWER(name)) = TRIM(LOWER($1))`,
+            [name]
+        );
+        return result.rows[0];
+    }
+
+
+
 
     //======================================= METODO POST =======================================
 

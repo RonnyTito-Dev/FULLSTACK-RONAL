@@ -1,28 +1,37 @@
-// Header.jsx
 import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-import api from '../api/axiosInstance'; 
-
+import api from '../api/axiosInstance';
 import { createLog } from '../services/logService';
-
 
 const Header = ({ onToggleSidebar }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [roles, setRoles] = useState([]);
+  const [userRoleName, setUserRoleName] = useState('');
 
-  // Obtener información del usuario al cargar
+  // Obtener usuario y roles al cargar
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUserAndRoles = async () => {
       try {
-        const response = await api.get('/auth/me');
-        setUser(response.data);
+        const [userResponse, rolesResponse] = await Promise.all([
+          api.get('/auth/me'),
+          api.get('/roles')
+        ]);
+        const userData = userResponse.data;
+        const rolesData = rolesResponse.data;
+
+        setUser(userData);
+        setRoles(rolesData);
+
+        const foundRole = rolesData.find(role => role.id === userData.role);
+        setUserRoleName(foundRole ? foundRole.name : 'Rol desconocido');
       } catch (error) {
-        console.error('Error al obtener datos del usuario:', error);
+        console.error('Error al obtener datos del usuario o roles:', error);
       }
     };
 
-    fetchUser();
+    fetchUserAndRoles();
   }, []);
 
   const handleLogout = async () => {
@@ -39,8 +48,7 @@ const Header = ({ onToggleSidebar }) => {
 
     if (result.isConfirmed) {
       try {
-        // Registrar log auth
-        await createLog({ action: 'Cerró sesion', affected_table: 'ninguna'});
+        await createLog({ action: 'Cerró sesión', affected_table: 'ninguna' });
         await api.post('/auth/logout');
         navigate('/login', { replace: true });
 
@@ -48,8 +56,10 @@ const Header = ({ onToggleSidebar }) => {
           title: '¡Sesión cerrada!',
           icon: 'success',
           timer: 1500,
-          showConfirmButton: false
+          showConfirmButton: false,
+          position: 'top-end'
         });
+        
       } catch (error) {
         console.error('Error cerrando sesión', error);
         Swal.fire('Error', 'No se pudo cerrar la sesión.', 'error');
@@ -57,9 +67,7 @@ const Header = ({ onToggleSidebar }) => {
     }
   };
 
-  const getInitial = (email) => {
-    return email ? email.charAt(0).toUpperCase() : 'U';
-  };
+  const getInitial = (email) => email ? email.charAt(0).toUpperCase() : 'U';
 
   return (
     <header className="d-flex justify-content-between align-items-center px-4 py-3 bg-primary text-white shadow">
@@ -77,8 +85,7 @@ const Header = ({ onToggleSidebar }) => {
       <div className="d-flex align-items-center gap-3">
         <button className="btn btn-light position-relative">
           <i className="bi bi-bell-fill text-primary"></i>
-          <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-          </span>
+          <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"></span>
         </button>
 
         <div className="dropdown">
@@ -87,20 +94,18 @@ const Header = ({ onToggleSidebar }) => {
             data-bs-toggle="dropdown"
           >
             <div className="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center" 
-              style={{ width: '26px', height: '26px' }}>
-              {getInitial(user?.email)}
+            style={{ width: '26px', height: '26px' }}>
+            {getInitial(user?.email)}
+          </div>
+
+          <div className="ms-2 d-none d-sm-block text-start">
+            <div>{user?.email || 'Usuario'} {' '}
+              <span className="badge bg-success mt-1"> {userRoleName}</span>
             </div>
-            <span className="ms-2 d-none d-sm-inline">
-              {user?.email || 'Usuario'}
-            </span>
+          </div>
+
           </button>
           <ul className="dropdown-menu dropdown-menu-end">
-            <li>
-              <button className="dropdown-item">
-                <i className="bi bi-person me-2"></i>Perfil
-              </button>
-            </li>
-            <li><hr className="dropdown-divider" /></li>
             <li>
               <button className="dropdown-item text-danger" onClick={handleLogout}>
                 <i className="bi bi-box-arrow-right me-2"></i>Cerrar sesión

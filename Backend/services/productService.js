@@ -29,22 +29,41 @@ class ProductService {
         if (!data.name || !data.price || !data.stock) {
             throw ApiError.badRequest('Nombre, precio y stock son requeridos');
         }
+
+        const existingName = await productModel.getProductByName(data.name);
+        if (existingName) {
+            throw ApiError.badRequest(`El producto con nombre "${data.name}" ya existe`);
+        }
+
         return await productModel.createProduct(data);
     }
 
-    // Metodo para editar un producto
-    async modifyProduct(id, data){
+    // Método para editar un producto
+    async modifyProduct(id, data) {
         if (!data.name || !data.price || !data.stock) {
             throw ApiError.badRequest('Nombre, precio y stock son requeridos');
         }
 
-        const existing = await productModel.getProductById(id);
-        if (!existing) {
+        const existingProduct = await productModel.getProductById(id);
+        if (!existingProduct) {
             throw ApiError.notFound(`Producto con ID ${id} no existe`);
         }
 
+        // Validar duplicado solo si el nombre fue modificado
+        if (data.name.trim() !== existingProduct.name) {
+            const duplicate = await productModel.getProductByName(data.name.trim());
+            if (duplicate) {
+                throw ApiError.conflict(`Ya existe un producto con el nombre "${data.name}"`);
+            }
+        }
+
+        // Limpieza antes de actualizar
+        data.name = data.name.trim();
+
         return await productModel.updateProduct(id, data);
     }
+
+
 
     
     // Método para editar solo el stock de un producto

@@ -48,7 +48,8 @@ const LoginPage = () => {
         icon: 'success',
         title: '¡Bienvenido!',
         showConfirmButton: false,
-        timer: 1500
+        timer: 1500,
+        position: 'top-end'
       });
 
       navigate('/inicio');
